@@ -2,17 +2,17 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "68cec0c14fb313706a315efda8149dc5",
+    "identityHash": "3f9f07f83f78c950d89b85e46c5a3d64",
     "entities": [
       {
         "tableName": "user",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `surname` TEXT NOT NULL, `login` TEXT NOT NULL, `password` TEXT NOT NULL, `address` TEXT NOT NULL, `phone` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "name",
@@ -21,32 +21,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "surname",
-            "columnName": "surname",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "login",
-            "columnName": "login",
+            "fieldPath": "email",
+            "columnName": "email",
             "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "password",
             "columnName": "password",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "address",
-            "columnName": "address",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "phone",
-            "columnName": "phone",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -62,13 +44,13 @@
       },
       {
         "tableName": "booking",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `time` TEXT NOT NULL, `id_user` INTEGER NOT NULL, `id_service_master` INTEGER NOT NULL, `master_name` TEXT NOT NULL, FOREIGN KEY(`id`) REFERENCES `user`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `time` TEXT NOT NULL, `id_user` INTEGER NOT NULL, `id_service_master` INTEGER NOT NULL, `master_name` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "time",
@@ -102,29 +84,17 @@
           ]
         },
         "indices": [],
-        "foreignKeys": [
-          {
-            "table": "user",
-            "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "id"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          }
-        ]
+        "foreignKeys": []
       },
       {
         "tableName": "service",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `service_type` TEXT NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, `time` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `service_type` TEXT NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, `time` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "service_type",
@@ -162,13 +132,13 @@
       },
       {
         "tableName": "master",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `description` TEXT NOT NULL, `specialization` TEXT NOT NULL, `experience_age` REAL NOT NULL, `rating` REAL NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `description` TEXT NOT NULL, `experience` REAL NOT NULL, `rating` REAL NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "description",
@@ -177,14 +147,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "specialization",
-            "columnName": "specialization",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "experience_age",
-            "columnName": "experience_age",
+            "fieldPath": "experience",
+            "columnName": "experience",
             "affinity": "REAL",
             "notNull": true
           },
@@ -208,7 +172,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '68cec0c14fb313706a315efda8149dc5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3f9f07f83f78c950d89b85e46c5a3d64')"
     ]
   }
 }

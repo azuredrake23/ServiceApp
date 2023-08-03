@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
     <item
-        android:id="@+id/settings_dest"
-        android:icon="@drawable/settings_icon"
-        android:title="@string/settings"
-        app:showAsAction="ifRoom" />
+        android:icon="@drawable/amu_bubble_mask"
+        app:showAsAction="ifRoom"
+        android:title="mask">
+        <menu>
+            <item
+                android:id="@+id/account_dest"
+                android:icon="@drawable/account_icon"
+                android:title="@string/account"
+                app:showAsAction="ifRoom" />
+            <item
+                android:id="@+id/settings_fragment"
+                android:icon="@drawable/settings_icon"
+                android:title="@string/settings"
+                app:showAsAction="ifRoom" />
+        </menu>
+    </item>
 
 </menu>

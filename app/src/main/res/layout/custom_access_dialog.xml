@@ -2,13 +2,12 @@
 <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="15dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/space_3"
+        android:background="@color/space_x"
         android:orientation="vertical"
 
         app:layout_constraintBottom_toBottomOf="parent"
@@ -18,17 +17,17 @@
 
 
         <TextView
-            android:id="@+id/tvLogin"
+            android:id="@+id/tvAccessEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="@string/login"
+            android:text="@string/email"
             android:textColor="@color/black"
             android:textSize="25sp"
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/textLogin"
+            android:id="@+id/textAccessEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -41,7 +40,7 @@
             android:background="#c0c0c0" />
 
         <TextView
-            android:id="@+id/tvPassword"
+            android:id="@+id/tvAccessPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -51,7 +50,7 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/textPassword"
+            android:id="@+id/textAccessPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"

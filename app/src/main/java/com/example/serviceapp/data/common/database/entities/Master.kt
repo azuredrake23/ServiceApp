@@ -6,9 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "master")
 data class Master(
-    @PrimaryKey (autoGenerate = true) var id: Int? = null,
+    @PrimaryKey (autoGenerate = true) var id: Int = 0,
     @ColumnInfo(name = "description") var description: String,
-    @ColumnInfo(name = "specialization") var specialization: String,
-    @ColumnInfo(name = "experience_age") var experience_age: Double,
+    @ColumnInfo(name = "experience") var experience: Double,
     @ColumnInfo(name = "rating") var rating: Double
 )

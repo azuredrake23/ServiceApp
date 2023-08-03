@@ -1,20 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Online Planner</string>
+    <string name="app_name">Service App</string>
 
     <string name="enter_text">Enter the text</string>
-    <string name="login">Login</string>
+    <string name="name">Name</string>
+    <string name="email">E-mail</string>
     <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="registration">Registration</string>
+
+    <string name="sign_in_user_not_found_message">Account not found, please try again or sign up</string>
+    <string name="sign_in_incorrect_pass_message">Incorrect password</string>
+    <string name="sign_in_success_message">You are successfully signed in!</string>
+
+    <string name="sign_up_ask_message">Don\'t have an account? Sign up</string>
+    <string name="sign_up_success_message">You are successfully signed up!</string>
+
+    <string name="empty_fields_message">Please check that fields are not empty</string>
+
+    <string name="sign_in">Sign In</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="sign_up">Sign Up</string>
     <string name="type">Type</string>
-    <string name="description">Description</string>
+    <string name="service_description">Service description</string>
     <string name="price">Price</string>
-    <string name="time">Time</string>
+    <string name="time">Lead time</string>
+    <string name="master">Master</string>
+    <string name="master_description">Master Description</string>
+    <string name="experience">Experience</string>
+    <string name="rating">Rating</string>
     <string name="employeeId">Employee ID</string>
     <string name="addCard">Add</string>
     <string name="makeOrder">Make Order</string>
 
+
+    <string name="empty_fields_warning">Fill all empty fields!</string>
+
     <string name="view_type">View type</string>
     <string name="settings">Settings</string>
+    <string name="account">Account</string>
 
     <string name="russian">Russian</string>
     <string name="key_russian" translatable="false">RUSSIAN</string>

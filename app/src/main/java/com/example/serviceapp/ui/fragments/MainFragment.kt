@@ -1,9 +1,7 @@
 package com.example.serviceapp.ui.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -16,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -24,14 +23,16 @@ import com.example.serviceapp.data.common.database.entities.Service
 import com.example.serviceapp.data.common.utils.PreferenceManager
 import com.example.serviceapp.databinding.MainFragmentBinding
 import com.example.serviceapp.ui.fragments.database_view_models.ServiceDatabaseViewModel
+import com.example.serviceapp.ui.fragments.database_view_models.UserDatabaseViewModel
+import com.example.serviceapp.ui.fragments.models.UserModel
 import com.example.serviceapp.ui.fragments.recycler_view.Card
 import com.example.serviceapp.ui.fragments.recycler_view.CardAdapter
-import com.example.serviceapp.ui.main.MainViewModel
 import com.example.serviceapp.ui.utils.mappers.Access
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 
 
 @AndroidEntryPoint
@@ -39,20 +40,24 @@ class MainFragment : Fragment(R.layout.main_fragment) {
 
     private val binding by viewBinding(MainFragmentBinding::bind)
     private val viewModel: MainFragmentViewModel by activityViewModels()
-    private val viewModelService: ServiceDatabaseViewModel by activityViewModels()
-    private val mainViewModel: MainViewModel by activityViewModels()
+    private val userViewModel: UserDatabaseViewModel by activityViewModels()
+    private val serviceViewModel: ServiceDatabaseViewModel by activityViewModels()
+
     var isSettingsFragment = false
     var accessStateFragment = false
-    private lateinit var preferenceManager: PreferenceManager
-    private val adapter by lazy {
-        CardAdapter()
+    private val preferenceManager by lazy {
+        PreferenceManager(context!!)
     }
+    private val args: MainFragmentArgs by navArgs()
+    private lateinit var adapter: CardAdapter
+
+    private val userData = UserModel.UserData()
     private var listOfServices = listOf<Service>()
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        preferenceManager = PreferenceManager(context)
-    }
+//    override fun onAttach(context: Context) {
+//        super.onAttach(context)
+//        preferenceManager = PreferenceManager(context)
+//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,14 +70,14 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     override fun onResume() {
         super.onResume()
         initLayout()
-        Handler().postDelayed({ addCard() }, 100)
+        Handler().postDelayed({ initCardAdapter() }, 100)
     }
 
-    private fun addCard() {
+    private fun initCardAdapter() {
         with(binding) {
-            recyclerView.layoutManager = GridLayoutManager(this@MainFragment.requireContext(), 3)
+            recyclerView.layoutManager = GridLayoutManager(context, 1)
+            adapter = CardAdapter(findNavController(), userData)
             recyclerView.adapter = adapter
-            Log.d("MAIN FRAGMENT", "services: $listOfServices")
             adapter.cleanCards()
             for (i in listOfServices.indices) {
                 adapter.addCard(
@@ -100,7 +105,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
-                    R.id.settings_dest -> {
+                    R.id.settings_fragment -> {
                         isSettingsFragment = true
                         menuItem.onNavDestinationSelected(findNavController())
                     }
@@ -113,7 +118,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     private fun initLayout() {
         with(binding) {
             addButton.setOnClickListener {
-                findNavController().navigate(R.id.add_employee_fragment)
+                findNavController().navigate(R.id.add_service_fragment)
 
 //                val transaction: FragmentTransaction = childFragmentManager.beginTransaction()
 //
@@ -127,8 +132,15 @@ class MainFragment : Fragment(R.layout.main_fragment) {
             if (accessStateFragment) addButton.visibility = View.VISIBLE
             else addButton.visibility = View.INVISIBLE
         }
-
+        initUserData()
         isSettingsFragment = false
+    }
+
+    private fun initUserData() {
+        userData.userName = args.userName
+        userData.userEmail = args.userEmail
+        userData.userPassword = args.userPassword
+        userData.userState = args.userState
     }
 
     private fun setObservers() {
@@ -144,11 +156,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }
 
-        with(mainViewModel) {
-
-        }
-
-        with(viewModelService) {
+        with(serviceViewModel) {
             allServices
                 .flowWithLifecycle(
                     viewLifecycleOwner.lifecycle,
@@ -156,13 +164,12 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                 )
                 .onEach {
                     listOfServices = it
-                    Log.d(
-                        "MAIN FRAGMENT FROM OBSERVE",
-                        "services: $it"
-                    )
+                    Timber.tag("MAIN FRAGMENT FROM OBSERVE").d("services: %s", it)
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }
+
+
     }
 
     private fun setListeners() {

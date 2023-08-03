@@ -10,6 +10,8 @@ import com.example.serviceapp.data.domain.databases.order_database.BookingReposi
 import com.example.serviceapp.data.domain.databases.service_database.ServiceRepository
 import com.example.serviceapp.data.domain.databases.service_database.ServiceRepositoryImpl
 import com.example.serviceapp.data.domain.databases.user_database.UserRepository
+import com.example.serviceapp.utils.UserManager
+import com.example.shapel.data.common.utils.ResourceManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
-@Module
+@Module(includes = [CommonModule::class])
 @InstallIn(SingletonComponent::class)
 class DatabaseModule {
 
@@ -50,7 +52,20 @@ class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideUserDaoRepository(userDao: UserDao): UserRepository = UserRepositoryImpl(userDao)
+    fun provideUserManager(
+        @ApplicationContext context: Context,
+        resourceManager: ResourceManager
+    ): UserManager =
+        UserManager(
+            context,
+            Dispatchers.Main,
+            CoroutineScope(SupervisorJob() + Dispatchers.Main),
+            resourceManager
+        )
+
+    @Provides
+    @Singleton
+    fun provideUserDaoRepository(userDao: UserDao, userManager: UserManager): UserRepository = UserRepositoryImpl(userDao, userManager)
 
     @Provides
     @Singleton

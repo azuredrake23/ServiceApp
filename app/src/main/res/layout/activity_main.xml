@@ -11,7 +11,7 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/ma_toolbar"
         style="@style/Widget.MaterialComponents.Toolbar"
-        android:background="@color/soft_grey"
+        android:background="@color/space_x"
         app:title="@string/app_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

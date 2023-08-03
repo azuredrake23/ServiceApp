@@ -56,14 +56,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Access check")
         val dialogLayout = layoutInflater.inflate(R.layout.custom_access_dialog, null)
-        val login = dialogLayout.findViewById<EditText>(R.id.textLogin)
-        val password = dialogLayout.findViewById<EditText>(R.id.textPassword)
+        val login = dialogLayout.findViewById<EditText>(R.id.textAccessEmail)
+        val password = dialogLayout.findViewById<EditText>(R.id.textAccessPassword)
 
+        builder.setOnCancelListener {
+            accessPreference!!.setValueIndex(0)
+        }
         builder.setView(dialogLayout)
         builder.setPositiveButton("OK") { _, _ ->
 
             if (login.text.toString() == Constants.loginCheck && password.text.toString() == Constants.passwordCheck) {
-                dialogLayout
                 accessPreference!!.setValueIndex(1)
             } else accessPreference!!.setValueIndex(0)
         }

@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "service")
 data class Service(
-    @PrimaryKey(autoGenerate = true) var id: Int? = null,
+    @PrimaryKey(autoGenerate = true) var id: Int = 0,
     @ColumnInfo(name = "service_type") var service_type: String,
     @ColumnInfo(name = "description") var description: String,
     @ColumnInfo(name = "price") var price: Double,
