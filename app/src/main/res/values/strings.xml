@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Online Planner</string>
+
+    <string name="enter_text">Enter the text</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="type">Type</string>
+    <string name="description">Description</string>
+    <string name="price">Price</string>
+    <string name="time">Time</string>
+    <string name="employeeId">Employee ID</string>
+    <string name="addCard">Add</string>
+    <string name="makeOrder">Make Order</string>
+
+    <string name="view_type">View type</string>
+    <string name="settings">Settings</string>
+
+    <string name="russian">Russian</string>
+    <string name="key_russian" translatable="false">RUSSIAN</string>
+    <string name="english">English</string>
+    <string name="key_english" translatable="false">ENGLISH</string>
+    <string name="user">User</string>
+    <string name="key_user" translatable="false">USER</string>
+    <string name="admin">Admin</string>
+    <string name="key_admin" translatable="false">ADMIN</string>
+
+    <string name="language_header">App language</string>
+    <string name="key_language_header" translatable="false">LANGUAGE</string>
+    <string name="access_header">Access</string>
+    <string name="key_access_header" translatable="false">ACCESS</string>
+
+    <string name="common_preferences_title">Common settings</string>
+    <string name="access_title">Access</string>
+    <string name="language_title">Application language</string>
+
+    <string name="access" translatable="false">ACCESS</string>
+    <string name="key_access" translatable="false">USER</string>
+
+</resources>

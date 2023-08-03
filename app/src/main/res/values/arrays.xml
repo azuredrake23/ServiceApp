@@ -1,0 +1,23 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="preference_language_labels">
+        <item>@string/english</item>
+        <item>@string/russian</item>
+    </string-array>
+
+    <string-array name="preference_language_keys">
+        <item>@string/key_english</item>
+        <item>@string/key_russian</item>
+    </string-array>
+
+    <string-array name="preference_access_labels">
+        <item>@string/user</item>
+        <item>@string/admin</item>
+    </string-array>
+
+    <string-array name="preference_access_keys">
+        <item>@string/key_user</item>
+        <item>@string/key_admin</item>
+    </string-array>
+
+</resources>

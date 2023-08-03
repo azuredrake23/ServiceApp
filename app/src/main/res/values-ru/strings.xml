@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Онлайн планер</string>
+
+    <string name="enter_text">Введите текст</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="type">Тип</string>
+    <string name="description">Описание</string>
+    <string name="price">Цена</string>
+    <string name="time">Время выполнения</string>
+    <string name="employeeId">ID рабочего</string>
+    <string name="addCard">Добавить</string>
+    <string name="makeOrder">Заказать</string>
+
+    <string name="view_type">Тип видимости</string>
+    <string name="settings">Настройки</string>
+
+    <string name="russian">Русский</string>
+    <string name="english">Английский</string>
+    <string name="user">Пользователь</string>
+    <string name="admin">Админ</string>
+
+    <string name="access_header">Доступ</string>
+    <string name="language_header">Язык приложения</string>
+
+    <string name="common_preferences_title">Общие настройки</string>
+    <string name="access_title">Доступ</string>
+    <string name="language_title">Язык приложения</string>
+
+</resources>

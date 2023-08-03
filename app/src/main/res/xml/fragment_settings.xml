@@ -1,0 +1,103 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/common_preferences_title">
+
+<!--        <ListPreference-->
+<!--            app:defaultValue="@string/key_user"-->
+<!--            app:entries="@array/preference_access_labels"-->
+<!--            app:entryValues="@array/preference_access_keys"-->
+<!--            app:key="@string/key_access_header"-->
+<!--            app:title="@string/access_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+
+        <ListPreference
+            app:defaultValue="@string/key_russian"
+            app:entries="@array/preference_language_labels"
+            app:entryValues="@array/preference_language_keys"
+            app:key="@string/key_language_header"
+            app:title="@string/language_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <DropDownPreference
+            app:defaultValue="@string/key_user"
+            app:entries="@array/preference_access_labels"
+            app:entryValues="@array/preference_access_keys"
+            app:key="@string/key_access_header"
+            app:title="@string/access_title"
+            app:useSimpleSummaryProvider="true"
+        />
+
+<!--        <SwitchPreference-->
+<!--            app:summaryOff="@string/UHF"-->
+<!--            app:summaryOn="@string/G"-->
+<!--            app:defaultValue="@string/key_connection"-->
+<!--            app:key="@string/key_connection_type_header"-->
+<!--            app:title="@string/connection_title" />-->
+<!--        <EditTextPreference-->
+<!--            app:defaultValue="@string/key_delay"-->
+<!--            app:key="@string/key_delaySend_header"-->
+<!--            app:title="@string/delaySend_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+<!--        <EditTextPreference-->
+<!--            app:defaultValue="@string/key_delay"-->
+<!--            app:key="@string/key_delayReceive_header"-->
+<!--            app:title="@string/delayReceive_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+<!--        <EditTextPreference-->
+<!--            app:defaultValue="@string/key_magnetic"-->
+<!--            app:key="@string/key_magnetic_header"-->
+<!--            app:title="@string/magnetic_title"-->
+<!--            app:useSimpleSummaryProvider="true"  />-->
+<!--        <EditTextPreference-->
+<!--            app:defaultValue="@string/key_grozaR_address"-->
+<!--            app:key="@string/key_grozaR_address_header"-->
+<!--            app:title="@string/grozaR_address_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+<!--    </PreferenceCategory>-->
+
+<!--    <PreferenceCategory app:title="@string/map_preferences_title">-->
+<!--        <EditTextPreference-->
+<!--            app:defaultValue="@string/key_max_detect_range"-->
+<!--            app:key="@string/key_max_detect_range_header"-->
+<!--            app:title="@string/max_detect_range_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+<!--&lt;!&ndash;        <EditTextPreference&ndash;&gt;-->
+<!--&lt;!&ndash;            app:defaultValue="@string/key_detect_angle"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:key="@string/key_detect_angle_header"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:title="@string/detect_angle_title"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:useSimpleSummaryProvider="true" />&ndash;&gt;-->
+<!--        <SwitchPreference-->
+<!--            app:summaryOff="@string/Off"-->
+<!--            app:summaryOn="@string/On"-->
+<!--            app:defaultValue="@string/key_state"-->
+<!--            app:key="@string/key_circle_header"-->
+<!--            app:title="@string/circle_title"/>-->
+<!--        <SwitchPreference-->
+<!--            app:summaryOff="@string/Off"-->
+<!--            app:summaryOn="@string/On"-->
+<!--            app:defaultValue="@string/key_state"-->
+<!--            app:key="@string/key_sector_header"-->
+<!--            app:title="@string/sector_title"/>-->
+<!--    </PreferenceCategory>-->
+
+
+<!--    <PreferenceCategory app:title="@string/internet_preferences_title">-->
+
+<!--        <EditTextPreference-->
+<!--            app:defaultValue="@string/key_IP"-->
+<!--            app:key="@string/key_IP_header"-->
+<!--            app:title="@string/ip_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+
+<!--        <PreferenceCategory app:title="@string/uhf_preferences_title">-->
+
+<!--            <EditTextPreference-->
+<!--                app:defaultValue="@string/key_grozaS_address"-->
+<!--                app:key="@string/key_grozaS_address_header"-->
+<!--                app:title="@string/grozaS_address_title"-->
+<!--                app:useSimpleSummaryProvider="true" />-->
+<!--        </PreferenceCategory>-->
+    </PreferenceCategory>
+
+</PreferenceScreen>

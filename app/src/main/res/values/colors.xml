@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="cyan">#FF00dbc6</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="pale_white">#E6FFFFFF</color>
+    <color name="green">#258529</color>
+    <color name="red">#F44336</color>
+    <color name="blue">#1269AD</color>
+    <color name="yellow">#EDE428</color>
+    <color name="persian_red">#D32F2F</color>
+    <color name="salad_green">#43A047</color>
+    <color name="pale_red">#33FF0000</color>
+    <color name="pale_green">#3300FF08</color>
+    <color name="pale_grey">#33818181</color>
+    <color name="charcoal_grey">#757575</color>
+    <color name="soft_grey">#CFCFCF</color>
+    <color name="light_grey">#6F6F6F</color>
+    <color name="grey">#434343</color>
+    <color name="dark">#333333</color>
+    <color name="transparent_red">#59CA6060</color>
+    <color name="lavender">#e6ddee</color>
+    <color name="lilac">#ae8fb1</color>
+    <color name="space_s">#001C30</color>
+    <color name="space_3">#176B87</color>
+    <color name="space_x">#64CCC5</color>
+    <color name="space_y">#DAFFFB</color>
+
+    <color name="candy_apple_red">#FE1100</color>
+    <color name="turkey_red">#B00F00</color>
+    <color name="princeton_orange">#FF9000</color>
+    <color name="tiger_eye">#B36500</color>
+    <color name="lime_green">#02CA2B</color>
+    <color name="office_green">#00811C</color>
+    <color name="school_bus_yellow">#FFD800</color>
+    <color name="old_gold">#CDB10D</color>
+    <color name="veronica">#A601FE</color>
+    <color name="indigo">#540080</color>
+
+    <color name="primary">#A6A6A6</color>
+    <color name="primaryVariant">#FF0000</color>
+    <color name="onPrimary">#000000</color>
+
+    <color name="secondary">#4169E1</color>
+    <color name="secondaryVariant">#BEDFFF</color>
+    <color name="onSecondary">#243F6A</color>
+
+    <color name="statusBarColor">#000000</color>
+
+</resources>
