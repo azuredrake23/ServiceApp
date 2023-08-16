@@ -3,10 +3,11 @@ package com.example.serviceapp.data.domain.databases.master_database
 import androidx.lifecycle.LiveData
 import com.example.serviceapp.data.common.database.daos.MasterDao
 import com.example.serviceapp.data.common.database.entities.Master
+import kotlinx.coroutines.flow.Flow
 
 class MasterRepositoryImpl(private val masterDao: MasterDao) : MasterRepository {
 
-    override fun getMasterDataList(): LiveData<List<Master>> = masterDao.getAll()
+    override fun getMasterDataList(): Flow<List<Master>> = masterDao.getAll()
 
     override suspend fun insertAll(vararg masters: Master) {
         masterDao.insertAll(*masters)

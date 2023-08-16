@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Сервисное приложение</string>
+    <string name="sign_in">Вход</string>
+    <string name="settings">Настройки</string>
+    <string name="account">Аккаунт</string>
+    <string name="phone_number_check">Проверка номера телефона</string>
+    <string name="verification">Верификация</string>
 
     <string name="enter_text">Введите текст</string>
     <string name="name">Имя</string>
@@ -8,20 +13,27 @@
     <string name="password">Пароль</string>
     <string name="confirm_password">Подтвердите пароль</string>
     <string name="registration">Регистрация</string>
+    <string name="phone_number">Номер телефона</string>
+    <string name="continue_text">Продолжить</string>
+    <string name="verify_text">Проверить</string>
 
     <string name="sign_in_user_not_found_message">Аккаунт не найден, повторите попытку или зарегестрируйтесь</string>
     <string name="sign_in_incorrect_pass_message">Неправильный пароль</string>
     <string name="sign_in_success_message">Вы успешно вошли!</string>
-
-    <string name="sign_up_ask_message">Нет аккаунта? Зарегестрируйся</string>
     <string name="sign_up_success_message">Вы успешно зарегистрировались!</string>
-
     <string name="empty_fields_message">Пожалуйста, проверьте, не пустые ли поля</string>
+    <string name="check_phone_number_message">Пожалуйста, проверьте код страны и номер телефона</string>
+    <string name="correct_phone_number_message">Пожалуйста, введите верный телефонный номер</string>
+    <string name="enter_number_message">Пожалуйста, введите телефонный номер</string>
+    <string name="successful_authentication_message">Успешная авторизация</string>
 
-    <string name="sign_in">Войти</string>
+    <string name="sign_in_with_social_networks">Войти через соцсети</string>
+    <string name="or">Или</string>
+    <string name="with_phone_number">По номеру телефона</string>
     <string name="sign_out">Выйти</string>
     <string name="sign_up">Зарегестрироваться</string>
     <string name="type">Тип</string>
+    <string name="service">Услуга</string>
     <string name="service_description">Описание услуги</string>
     <string name="price">Цена</string>
     <string name="time">Время выполнения</string>
@@ -30,14 +42,13 @@
     <string name="experience">Опыт работы</string>
     <string name="rating">Рейтинг</string>
     <string name="employeeId">ID рабочего</string>
-    <string name="addCard">Добавить</string>
+    <string name="addMaster">Add Master</string>
+    <string name="addService">Add Service</string>
     <string name="makeOrder">Заказать</string>
 
     <string name="empty_fields_warning">Заполните все пустые поля!</string>
 
     <string name="view_type">Тип видимости</string>
-    <string name="settings">Настройки</string>
-    <string name="account">Аккаунт</string>
     <string name="russian">Русский</string>
     <string name="english">Английский</string>
     <string name="user">Пользователь</string>

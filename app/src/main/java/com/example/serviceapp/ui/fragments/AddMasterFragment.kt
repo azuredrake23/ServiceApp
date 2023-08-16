@@ -9,16 +9,13 @@ import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.serviceapp.R
 import com.example.serviceapp.data.common.database.entities.Master
-import com.example.serviceapp.data.common.database.entities.Service
 import com.example.serviceapp.data.entities.Errors
 import com.example.serviceapp.databinding.AddMasterFragmentBinding
-import com.example.serviceapp.databinding.AddServiceFragmentBinding
 import com.example.serviceapp.ui.fragments.database_view_models.MasterDatabaseViewModel
-import com.example.serviceapp.ui.fragments.database_view_models.ServiceDatabaseViewModel
 
-class AddServiceFragment: Fragment(R.layout.add_service_fragment) {
-    private val binding by viewBinding(AddServiceFragmentBinding::bind)
-    private val serviceViewModel: ServiceDatabaseViewModel by activityViewModels()
+class AddMasterFragment: Fragment(R.layout.add_master_fragment) {
+    private val binding by viewBinding(AddMasterFragmentBinding::bind)
+    private val masterViewModel: MasterDatabaseViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -27,29 +24,30 @@ class AddServiceFragment: Fragment(R.layout.add_service_fragment) {
     }
 
     private fun setObservers() {
+        with(masterViewModel){
 
+        }
     }
 
     private fun setListeners() {
         with (binding){
-            addServiceButton.setOnClickListener {
-                if (textType.text.isEmpty() || textServiceDescription.text.isEmpty() || textPrice.text.isEmpty() || textTime.text.isEmpty()) {
+            addMasterButton.setOnClickListener {
+                if (textMaster.text.isEmpty() || textMasterDescription.text.isEmpty() || textExperience.text.isEmpty() || textRating.text.isEmpty()) {
                     Toast.makeText(context, Errors.EMPTY_FIELDS, Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
-                serviceViewModel.insert(
-                    Service(
-                        service_type = textType.text.toString(),
-                        description = textServiceDescription.text.toString(),
-                        price = textPrice.text.toString().toDouble(),
-                        time = textTime.text.toString()
+                masterViewModel.insert(
+                    Master(
+                        master = textMaster.text.toString(),
+                        description = textMasterDescription.text.toString(),
+                        experience = textExperience.text.toString().toDouble(),
+                        rating = textRating.text.toString().toDouble()
                     )
                 )
 
                 findNavController().navigate(R.id.main_fragment)
             }
-
         }
     }
 }

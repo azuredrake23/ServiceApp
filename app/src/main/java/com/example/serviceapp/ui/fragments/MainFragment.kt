@@ -19,9 +19,11 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.serviceapp.R
+import com.example.serviceapp.data.common.database.entities.Master
 import com.example.serviceapp.data.common.database.entities.Service
 import com.example.serviceapp.data.common.utils.PreferenceManager
 import com.example.serviceapp.databinding.MainFragmentBinding
+import com.example.serviceapp.ui.fragments.database_view_models.MasterDatabaseViewModel
 import com.example.serviceapp.ui.fragments.database_view_models.ServiceDatabaseViewModel
 import com.example.serviceapp.ui.fragments.database_view_models.UserDatabaseViewModel
 import com.example.serviceapp.ui.fragments.models.UserModel
@@ -42,17 +44,19 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     private val viewModel: MainFragmentViewModel by activityViewModels()
     private val userViewModel: UserDatabaseViewModel by activityViewModels()
     private val serviceViewModel: ServiceDatabaseViewModel by activityViewModels()
+    private val masterViewModel: MasterDatabaseViewModel by activityViewModels()
 
     var isSettingsFragment = false
     var accessStateFragment = false
     private val preferenceManager by lazy {
-        PreferenceManager(context!!)
+        PreferenceManager(requireContext())
     }
     private val args: MainFragmentArgs by navArgs()
     private lateinit var adapter: CardAdapter
 
     private val userData = UserModel.UserData()
     private var listOfServices = listOf<Service>()
+    private var listOfMasters = listOf<Master>()
 
 //    override fun onAttach(context: Context) {
 //        super.onAttach(context)
@@ -70,7 +74,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     override fun onResume() {
         super.onResume()
         initLayout()
-        Handler().postDelayed({ initCardAdapter() }, 100)
+//        Handler().postDelayed({ initCardAdapter() }, 100)
     }
 
     private fun initCardAdapter() {
@@ -82,11 +86,14 @@ class MainFragment : Fragment(R.layout.main_fragment) {
             for (i in listOfServices.indices) {
                 adapter.addCard(
                     Card(
-                        i,
                         listOfServices[i].service_type,
                         listOfServices[i].description,
                         listOfServices[i].price,
-                        listOfServices[i].time
+                        listOfServices[i].time,
+                        listOfMasters[i].master,
+                        listOfMasters[i].description,
+                        listOfMasters[i].experience,
+                        listOfMasters[i].rating,
                     )
                 )
             }
@@ -164,12 +171,21 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                 )
                 .onEach {
                     listOfServices = it
-                    Timber.tag("MAIN FRAGMENT FROM OBSERVE").d("services: %s", it)
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }
 
-
+        with(masterViewModel) {
+            allMasters
+                .flowWithLifecycle(
+                    viewLifecycleOwner.lifecycle,
+                    Lifecycle.State.STARTED
+                )
+                .onEach {
+                    listOfMasters = it
+                }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
+        }
     }
 
     private fun setListeners() {
@@ -193,10 +209,6 @@ class MainFragment : Fragment(R.layout.main_fragment) {
             ) == Access.USER.name
         )
             viewModel.setAccessState(false)
-    }
-
-    private fun showSnackbar(message: String) {
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
     }
 
 }

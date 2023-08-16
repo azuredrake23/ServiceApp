@@ -1,10 +1,13 @@
 package com.example.serviceapp.ui.fragments.recycler_view
 
-import android.animation.LayoutTransition
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
 import android.widget.LinearLayout
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
@@ -33,7 +36,7 @@ class CardAdapter(
             with(binding) {
                 masterLayout.setOnClickListener {
                     clickArrow.animate().rotationBy(180F).setDuration(100).start()
-                    createLayoutAnimations()
+                    createLayoutAnimation()
                 }
                 makeOrderButton.setOnClickListener {
                     if (!userData.userState)
@@ -49,31 +52,21 @@ class CardAdapter(
                 serviceDescription.text = card.descriptionOfService
                 price.text = card.priceOfService.toString()
                 time.text = card.time
+                master.text = card.master
+                masterDescription.text = card.descriptionOfMaster
+                experience.text = card.experience.toString()
+                rating.text = card.rating.toString()
             }
         }
 
-        private fun createLayoutAnimations() {
+        private fun createLayoutAnimation() {
             with(binding) {
-                createLayoutAnimation(masterDescLayout).layoutTransition.enableTransitionType(
-                    LayoutTransition.CHANGING
-                )
-                createLayoutAnimation(masterExpLayout).layoutTransition.enableTransitionType(
-                    LayoutTransition.CHANGING
-                )
-                createLayoutAnimation(masterRatingLayout).layoutTransition.enableTransitionType(
-                    LayoutTransition.CHANGING
-                )
+                if (masterContainer.visibility == View.VISIBLE)
+                    masterContainer.visibility = View.GONE
+                else masterContainer.visibility = View.VISIBLE
             }
         }
 
-        private fun createLayoutAnimation(layout: LinearLayout): LinearLayout {
-            val params: ViewGroup.LayoutParams = layout.layoutParams
-            if (layout.layoutParams.height == 0)
-                params.height = ViewGroup.LayoutParams.WRAP_CONTENT
-            else params.height = 0
-            layout.layoutParams = params
-            return layout
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardHolder {

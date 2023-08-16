@@ -58,19 +58,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/space_x"
         android:gravity="center"
         android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:context=".MainActivity">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="@string/sign_in"
+            android:text="@string/sign_in_with_social_networks"
             android:textColor="@android:color/black"
-            android:textSize="25sp"
-            android:textStyle="bold" />
+            android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,43 +79,42 @@
             android:layout_marginHorizontal="24dp"
             android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:background="@android:color/darker_gray"
-                android:hint="@string/email"
-                android:minHeight="48dp"
-                android:padding="8dp" />
-
-            <EditText
-                android:id="@+id/password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:background="@android:color/darker_gray"
-                android:hint="@string/password"
-                android:inputType="textPassword"
-                android:minHeight="48dp"
-                android:padding="8dp" />
-
             <TextView
-                android:id="@+id/enter_button"
+                android:id="@+id/google_button"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/mybutton"
+                android:layout_height="42dp"
+                android:background="@drawable/google_styled_button"
                 android:gravity="center"
                 android:padding="5sp"
-                android:text="@string/sign_in"
-                android:textAllCaps="false"
+                android:paddingEnd="35sp"
+                android:text="@string/google"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:drawableLeftCompat="@drawable/google_icon"
+                tools:ignore="RtlSymmetry" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5sp"
+                android:text="@string/or"
                 android:textColor="@color/black"
-                android:textSize="25sp" />
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/phone_number_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="@drawable/simple_styled_button"
+                android:padding="5sp"
+                android:text="@string/with_phone_number"
+                android:textSize="18sp"/>
 
         </LinearLayout>
 
-        <TextView
+        TextView
             android:id="@+id/sign_up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

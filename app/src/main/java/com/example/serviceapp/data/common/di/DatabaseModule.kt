@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.serviceapp.data.common.database.daos.*
 import com.example.serviceapp.data.domain.databases.user_database.UserRepositoryImpl
 import com.example.serviceapp.data.common.database.database.AppDatabase
+import com.example.serviceapp.data.domain.databases.master_database.MasterRepository
 import com.example.serviceapp.data.domain.databases.master_database.MasterRepositoryImpl
 import com.example.serviceapp.data.domain.databases.order_database.BookingRepository
 import com.example.serviceapp.data.domain.databases.order_database.BookingRepositoryImpl
@@ -46,9 +47,7 @@ class DatabaseModule {
     @Singleton
     fun provideServiceDao(database: AppDatabase): ServiceDao = database.serviceDao()
 
-    @Provides
-    @Singleton
-    fun provideMasterDaoRepository(masterDao: MasterDao): MasterRepositoryImpl = MasterRepositoryImpl(masterDao)
+
 
     @Provides
     @Singleton
@@ -62,6 +61,10 @@ class DatabaseModule {
             CoroutineScope(SupervisorJob() + Dispatchers.Main),
             resourceManager
         )
+
+    @Provides
+    @Singleton
+    fun provideMasterDaoRepository(masterDao: MasterDao): MasterRepository = MasterRepositoryImpl(masterDao)
 
     @Provides
     @Singleton

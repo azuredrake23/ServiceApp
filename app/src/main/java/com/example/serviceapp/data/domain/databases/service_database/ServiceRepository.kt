@@ -3,7 +3,7 @@ package com.example.serviceapp.data.domain.databases.service_database
 import com.example.serviceapp.data.common.database.entities.Service
 import kotlinx.coroutines.flow.Flow
 
-interface ServiceRepository {
+interface   ServiceRepository {
     fun getServiceDataList(): Flow<List<Service>>
     //    fun loadAllByIds(userIds: IntArray)
 //    fun findByName(first: String, last: String)

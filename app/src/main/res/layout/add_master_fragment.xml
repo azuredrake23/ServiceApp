@@ -9,50 +9,50 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-            android:id="@+id/textType"
+            android:id="@+id/textMaster"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
-            android:hint="@string/type"
+            android:hint="@string/master"
             android:minHeight="48dp"
             android:paddingStart="5sp"
             android:paddingTop="15sp"
             tools:ignore="RtlSymmetry" />
 
         <EditText
-            android:id="@+id/textServiceDescription"
+            android:id="@+id/textMasterDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
-            android:hint="@string/service_description"
+            android:hint="@string/master_description"
             android:minHeight="48dp"
             android:paddingStart="5sp"
             android:paddingTop="15sp"
             tools:ignore="RtlSymmetry" />
 
         <EditText
-            android:id="@+id/textPrice"
+            android:id="@+id/textExperience"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
-            android:hint="@string/price"
+            android:hint="@string/experience"
             android:minHeight="48dp"
             android:paddingStart="5sp"
             android:paddingTop="15sp"
             tools:ignore="RtlSymmetry" />
 
         <EditText
-            android:id="@+id/textTime"
+            android:id="@+id/textRating"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
-            android:hint="@string/time"
+            android:hint="@string/rating"
             android:minHeight="48dp"
             android:paddingStart="5sp"
             android:paddingTop="15sp"
@@ -69,7 +69,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/addServiceButton"
+            android:id="@+id/addMasterButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
@@ -77,7 +77,7 @@
             android:layout_marginEnd="10dp"
             android:gravity="center"
             android:padding="5sp"
-            android:text="@string/addService"
+            android:text="@string/addMaster"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -85,6 +85,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

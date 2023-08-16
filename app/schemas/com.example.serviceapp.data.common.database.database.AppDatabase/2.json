@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "3f9f07f83f78c950d89b85e46c5a3d64",
+    "identityHash": "95a87b8eafabbe0d9594730ff5d7dbc3",
     "entities": [
       {
         "tableName": "user",
@@ -132,12 +132,18 @@
       },
       {
         "tableName": "master",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `description` TEXT NOT NULL, `experience` REAL NOT NULL, `rating` REAL NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `master` TEXT NOT NULL, `description` TEXT NOT NULL, `experience` REAL NOT NULL, `rating` REAL NOT NULL, FOREIGN KEY(`id`) REFERENCES `service`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "master",
+            "columnName": "master",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -166,13 +172,25 @@
           ]
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "service",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3f9f07f83f78c950d89b85e46c5a3d64')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '95a87b8eafabbe0d9594730ff5d7dbc3')"
     ]
   }
 }
