@@ -15,16 +15,6 @@ class UserRepositoryImpl(private val userDao: UserDao, private val userManager: 
 
     override fun getUsersDataList(): Flow<List<User>> = userDao.getAllUsers()
 
-    override suspend fun setUserRegisteredState(email: String, password: String) {
-        withContext(Dispatchers.IO) {
-            userManager.setUserDataWithSignInState(
-                userDao.userRegistration(email, password) > 0,
-                userDao.incorrectPass(email, password) > 0,
-                userDao.getUserData(email, password)
-            )
-        }
-    }
-
     override fun getUserData(): SharedFlow<UserModel.UserDataWithSignInState> = userManager.userDataWithSignInState
 
     override fun getUser(userId: Int): User = userDao.getUser(userId)
@@ -52,5 +42,13 @@ class UserRepositoryImpl(private val userDao: UserDao, private val userManager: 
 
     override suspend fun delete(user: User) {
         userDao.delete(user)
+    }
+
+    override suspend fun updateAll(vararg users: User) {
+        userDao.updateAll(*users)
+    }
+
+    override suspend fun update(user: User) {
+        userDao.update(user)
     }
 }

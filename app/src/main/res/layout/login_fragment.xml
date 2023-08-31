@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/registerFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -56,74 +55,140 @@
     <!--    </LinearLayout>-->
 
     <LinearLayout
+        android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:background="@drawable/edit_text"
         android:orientation="vertical"
+        android:padding="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:context=".MainActivity">
+        app:layout_constraintTop_toTopOf="@+id/guideline4">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
+            android:gravity="center"
             android:text="@string/sign_in_with_social_networks"
             android:textColor="@android:color/black"
             android:textSize="20sp" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/google_button"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:background="@drawable/google_styled_button"
+            android:gravity="center"
+            android:padding="5sp"
+            android:paddingEnd="35sp"
+            android:text="@string/google"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:drawableLeftCompat="@drawable/google_icon"
+            tools:ignore="RtlSymmetry" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:orientation="vertical">
+            android:gravity="center"
+            android:padding="5sp"
+            android:text="@string/or"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/google_button"
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:background="@drawable/google_styled_button"
-                android:gravity="center"
-                android:padding="5sp"
-                android:paddingEnd="35sp"
-                android:text="@string/google"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                app:drawableLeftCompat="@drawable/google_icon"
-                tools:ignore="RtlSymmetry" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="5sp"
-                android:text="@string/or"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/phone_number_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:background="@drawable/simple_styled_button"
-                android:padding="5sp"
-                android:text="@string/with_phone_number"
-                android:textSize="18sp"/>
-
-        </LinearLayout>
-
-        TextView
-            android:id="@+id/sign_up"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/phone_number_button"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="@string/sign_up_ask_message"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:textStyle="italic" />
+            android:background="@drawable/simple_styled_button"
+            android:gravity="center"
+            android:padding="5sp"
+            android:text="@string/with_phone_number"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
 
     </LinearLayout>
+
+<!--    <LinearLayout-->
+<!--        android:id="@+id/linearLayout3"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginHorizontal="24dp"-->
+<!--        android:background="@drawable/edit_text"-->
+<!--        android:orientation="vertical"-->
+<!--        android:padding="20dp"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/guideline3"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent">-->
+
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginBottom="24dp"-->
+<!--            android:gravity="center"-->
+<!--            android:text="@string/enter_email_message"-->
+<!--            android:textColor="@android:color/black"-->
+<!--            android:textSize="20sp" />-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/emailED"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="48dp"-->
+<!--            android:background="@drawable/edit_text"-->
+<!--            android:drawableStart="@drawable/email"-->
+<!--            android:drawablePadding="12dp"-->
+<!--            android:ems="10"-->
+<!--            android:hint="@string/email"-->
+<!--            android:inputType="textEmailAddress"-->
+<!--            android:paddingStart="12sp"-->
+<!--            android:paddingEnd="12sp"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="14sp" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/continue_login_button"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@drawable/simple_styled_button"-->
+<!--            android:gravity="center"-->
+<!--            android:layout_marginTop="24dp"-->
+<!--            android:text="@string/continue_text"-->
+<!--            android:padding="5sp"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent" />-->
+
+<!--    </LinearLayout>-->
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="113dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="244dp" />
+
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="center"-->
+<!--        android:padding="5sp"-->
+<!--        android:text="@string/also"-->
+<!--        android:textColor="@color/black"-->
+<!--        android:textSize="16sp"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

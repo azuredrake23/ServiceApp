@@ -11,14 +11,14 @@ interface UserDao {
     @Query("SELECT * FROM user")
     fun getAllUsers(): Flow<List<User>>
 
-    @Query("SELECT COUNT(*) FROM user WHERE email =:email AND password =:password")
-    suspend fun userRegistration(email: String, password: String): Int
+    @Query("SELECT COUNT(*) FROM user WHERE phoneNumber =:phoneNumber")
+    suspend fun isUserExistsByPhone(phoneNumber: String): Int
 
-    @Query("SELECT COUNT(*) FROM user WHERE email =:email AND password !=:password")
-    suspend fun incorrectPass(email: String, password: String): Int
+    @Query("SELECT COUNT(*) FROM user WHERE email =:email")
+    suspend fun isUserExistsByEmail(email: String): Int
 
-    @Query("SELECT * FROM user WHERE email =:email AND password =:password")
-    suspend fun getUserData(email: String, password: String): User
+    @Query("SELECT * FROM user WHERE email =:email OR phoneNumber =:phoneNumber")
+    suspend fun getUserData(email: String, phoneNumber: String): User
 
 //    @Query("SELECT * FROM user WHERE uid IN (:userIds)")
 //    fun loadAllByIds(userIds: IntArray): List<User>
@@ -29,7 +29,7 @@ interface UserDao {
     @Insert
     suspend fun insertAll(vararg users: User)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(user: User)
 
     @Query("DELETE FROM user")
@@ -37,4 +37,16 @@ interface UserDao {
 
     @Delete
     suspend fun delete(user: User)
+
+    @Transaction
+    suspend fun updateAll(vararg users:User){
+        deleteAll()
+        insertAll(*users)
+    }
+
+    @Transaction
+    suspend fun update(user: User){
+        delete(user)
+        insert(user)
+    }
 }

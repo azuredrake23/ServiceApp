@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10sp"
-                android:background="@drawable/corner_layout"
+                android:background="@drawable/edit_text"
                 android:padding="5sp"
                 android:text="@string/type"
                 android:textColor="@color/black"
@@ -167,7 +167,7 @@
                                 android:layout_margin="5dp"
                                 android:layout_marginTop="5dp"
                                 android:layout_weight="1"
-                                android:background="@drawable/baseline_arrow_drop_down_24"
+                                android:background="@drawable/arrow_drop_down"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
                         </androidx.constraintlayout.widget.ConstraintLayout>

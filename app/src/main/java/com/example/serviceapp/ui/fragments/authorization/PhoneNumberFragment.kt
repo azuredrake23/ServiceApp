@@ -2,11 +2,15 @@ package com.example.serviceapp.ui.fragments.authorization
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.serviceapp.R
 import com.example.serviceapp.data.common.utils.showToast
 import com.example.serviceapp.databinding.PhoneNumberFragmentBinding
+import com.example.serviceapp.ui.fragments.MainFragmentDirections
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
@@ -25,6 +29,7 @@ class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
     private val firebaseAuth by lazy {
         FirebaseAuth.getInstance()
     }
+    private var phoneNumber = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -66,7 +71,8 @@ class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
             continueButton.setOnClickListener {
                 if (editTextPhone.text.isNotEmpty()) {
                     if (editTextPhone.text.length == 9) {
-                        setPhoneAuth("+" + ccp.selectedCountryCode.toString() + editTextPhone.text.toString())
+                        phoneNumber = "+" + ccp.selectedCountryCode.toString() + editTextPhone.text.toString()
+                        setPhoneAuth(phoneNumber)
                     } else {
                         showToast(
                             requireContext(),
@@ -100,10 +106,13 @@ class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
 
             if (e is FirebaseAuthInvalidCredentialsException) {
                 // Invalid request
+                showToast(requireContext(), e.message.toString())
             } else if (e is FirebaseTooManyRequestsException) {
                 // The SMS quota for the project has been exceeded
+                showToast(requireContext(), e.message.toString())
             } else if (e is FirebaseAuthMissingActivityForRecaptchaException) {
                 // reCAPTCHA verification attempted with null Activity
+                showToast(requireContext(), e.message.toString())
             }
 
             // Show a message and update the UI
@@ -121,7 +130,8 @@ class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
             // Save verification ID and resending token so we can use them later
 //                storedVerificationId = verificationId
 //                resendToken = token
-            val t = 5
+
+            findNavController().navigate(R.id.otp_fragment, bundleOf("verificationId" to verificationId, "token" to token, "phoneNumber" to phoneNumber))
         }
     }
 }

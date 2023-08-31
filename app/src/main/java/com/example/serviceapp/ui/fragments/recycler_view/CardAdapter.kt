@@ -39,13 +39,13 @@ class CardAdapter(
                     createLayoutAnimation()
                 }
                 makeOrderButton.setOnClickListener {
-                    if (!userData.userState)
-                        navController.navigate(R.id.login_fragment)
-                    else navController.navigate(
-                        MainFragmentDirections.actionMainFragmentToAccountFragment(
-                            userData.userName
-                        )
-                    )
+//                    if (!userData.userState)
+//                        navController.navigate(R.id.login_fragment)
+//                    else navController.navigate(
+//                        MainFragmentDirections.actionMainFragmentToAccountDest(
+//                            userData.userName
+//                        )
+//                    )
 
                 }
                 type.text = card.typeOfService

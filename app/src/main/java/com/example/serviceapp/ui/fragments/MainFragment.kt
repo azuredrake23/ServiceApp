@@ -1,11 +1,12 @@
 package com.example.serviceapp.ui.fragments
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.os.bundleOf
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -22,6 +23,7 @@ import com.example.serviceapp.R
 import com.example.serviceapp.data.common.database.entities.Master
 import com.example.serviceapp.data.common.database.entities.Service
 import com.example.serviceapp.data.common.utils.PreferenceManager
+import com.example.serviceapp.data.common.utils.showToast
 import com.example.serviceapp.databinding.MainFragmentBinding
 import com.example.serviceapp.ui.fragments.database_view_models.MasterDatabaseViewModel
 import com.example.serviceapp.ui.fragments.database_view_models.ServiceDatabaseViewModel
@@ -30,11 +32,13 @@ import com.example.serviceapp.ui.fragments.models.UserModel
 import com.example.serviceapp.ui.fragments.recycler_view.Card
 import com.example.serviceapp.ui.fragments.recycler_view.CardAdapter
 import com.example.serviceapp.ui.utils.mappers.Access
-import com.google.android.material.snackbar.Snackbar
+import com.google.android.gms.auth.api.identity.SignInCredential
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthCredential
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import timber.log.Timber
 
 
 @AndroidEntryPoint
@@ -51,7 +55,9 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     private val preferenceManager by lazy {
         PreferenceManager(requireContext())
     }
-    private val args: MainFragmentArgs by navArgs()
+
+    private var firebaseUser: FirebaseUser? = null
+
     private lateinit var adapter: CardAdapter
 
     private val userData = UserModel.UserData()
@@ -69,13 +75,14 @@ class MainFragment : Fragment(R.layout.main_fragment) {
         setPrefs()
         setListeners()
         setupMenu()
+        initLayout()
     }
 
-    override fun onResume() {
-        super.onResume()
-        initLayout()
-//        Handler().postDelayed({ initCardAdapter() }, 100)
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        initLayout()
+////        Handler().postDelayed({ initCardAdapter() }, 100)
+//    }
 
     private fun initCardAdapter() {
         with(binding) {
@@ -114,7 +121,18 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                 when (menuItem.itemId) {
                     R.id.settings_fragment -> {
                         isSettingsFragment = true
-                        menuItem.onNavDestinationSelected(findNavController())
+                            findNavController().navigate(
+                                R.id.settings_fragment,
+                            )
+                    }
+
+                    R.id.account_fragment -> {
+
+                            findNavController().navigate(
+                                R.id.account_fragment,
+                                bundleOf("firebaseUser" to firebaseUser)
+                            )
+
                     }
                 }
                 return true
@@ -144,10 +162,7 @@ class MainFragment : Fragment(R.layout.main_fragment) {
     }
 
     private fun initUserData() {
-        userData.userName = args.userName
-        userData.userEmail = args.userEmail
-        userData.userPassword = args.userPassword
-        userData.userState = args.userState
+        firebaseUser = requireArguments().getParcelable("firebaseUser")
     }
 
     private fun setObservers() {

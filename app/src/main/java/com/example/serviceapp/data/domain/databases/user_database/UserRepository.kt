@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.SharedFlow
 interface UserRepository {
 
     fun getUsersDataList(): Flow<List<User>>
-    suspend fun setUserRegisteredState(email: String, password: String)
     fun getUserData(): SharedFlow<UserModel.UserDataWithSignInState>
 //    fun loadAllByIds(userIds: IntArray)
     fun getUser(userId: Int): User
@@ -16,4 +15,6 @@ interface UserRepository {
     suspend fun insert(user: User)
     suspend fun deleteAll()
     suspend fun delete(user: User)
+    suspend fun updateAll(vararg users: User)
+    suspend fun update(user:User)
 }

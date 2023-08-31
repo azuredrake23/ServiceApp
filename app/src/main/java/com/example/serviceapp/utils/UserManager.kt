@@ -28,12 +28,12 @@ class UserManager(
     ) {
         when (isUserRegistered) {
             true -> {
-                emitUserData(
-                    UserModel.UserDataWithSignInState(
-                        UserModel.UserData(userData.name, userData.email, userData.password, true),
-                        Errors.SIGNED_IN
-                    )
-                )
+//                emitUserData(
+//                    UserModel.UserDataWithSignInState(
+//                        UserModel.UserData(userData.name, userData.email, userData.password),
+//                        Errors.SIGNED_IN
+//                    )
+//                )
             }
 
             false -> {
@@ -48,21 +48,21 @@ class UserManager(
     ) {
         when (IsPasswordIncorrectAndUserExists) {
             true -> {
-                emitUserData(
-                    UserModel.UserDataWithSignInState(
-                        UserModel.UserData(userData.name, userData.email, userData.password, false),
-                        Errors.SIGNED_IN_INCORRECT_PASS
-                    )
-                )
+//                emitUserData(
+//                    UserModel.UserDataWithSignInState(
+//                        UserModel.UserData(userData.name, userData.email, userData.password),
+//                        Errors.SIGNED_IN_INCORRECT_PASS
+//                    )
+//                )
             }
 
             else -> {
-                emitUserData(
-                    UserModel.UserDataWithSignInState(
-                        UserModel.UserData(userData.name, userData.email, userData.password, false),
-                        Errors.SIGNED_IN_USER_NOT_FOUND
-                    )
-                )
+//                emitUserData(
+//                    UserModel.UserDataWithSignInState(
+//                        UserModel.UserData(userData.name, userData.email, userData.password),
+//                        Errors.SIGNED_IN_USER_NOT_FOUND
+//                    )
+//                )
             }
         }
     }

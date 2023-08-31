@@ -14,18 +14,19 @@ import javax.inject.Inject
 @HiltViewModel
 class UserDatabaseViewModel @Inject constructor(
     private val insertUserUseCase: InsertUserUseCase,
-    private val insertAllUserUseCase: InsertAllUsersUseCase,
-    getUserDataListUseCase: GetUserDataListUseCase,
-    private val getUserUseCase: GetUserUseCase,
-    private val deleteUserUseCase: DeleteUserUseCase,
-    private val deleteAllUserUseCase: DeleteAllUsersUseCase,
-    private val setUserRegisteredStateUseCase: IsUserRegisteredUseCase,
-    getUserRegisteredUseCase: GetUserDataWithSignInStateUseCase
+//    private val insertAllUserUseCase: InsertAllUsersUseCase,
+//    getUserDataListUseCase: GetUserDataListUseCase,
+//    private val getUserUseCase: GetUserUseCase,
+//    private val deleteUserUseCase: DeleteUserUseCase,
+//    private val deleteAllUserUseCase: DeleteAllUsersUseCase,
+    private val updateUserUseCase: UpdateUserUseCase,
+//    private val updateAllUsersUseCase: UpdateAllUsersUseCase,
+//    getUserRegisteredUseCase: GetUserDataWithSignInStateUseCase
 ) : ViewModel() {
 
-    val allUsers: Flow<List<User>> = getUserDataListUseCase.userDataList
-
-    val userData: SharedFlow<UserModel.UserDataWithSignInState> = getUserRegisteredUseCase.userDataWithSignInState
+//    val allUsers: Flow<List<User>> = getUserDataListUseCase.userDataList
+//
+//    val userData: SharedFlow<UserModel.UserDataWithSignInState> = getUserRegisteredUseCase.userDataWithSignInState
 
 //    fun getUser(userId: Int) = viewModelScope.launch {
 //        getUserUseCase.getUser(userId)
@@ -33,6 +34,10 @@ class UserDatabaseViewModel @Inject constructor(
 
     fun insert(user: User) = viewModelScope.launch {
         insertUserUseCase.insert(user)
+    }
+
+    fun update(user: User) = viewModelScope.launch {
+        updateUserUseCase.update(user)
     }
 
 //    fun insertAll(vararg users: User) = viewModelScope.launch {
@@ -46,10 +51,4 @@ class UserDatabaseViewModel @Inject constructor(
 //    fun deleteAll() = viewModelScope.launch {
 //        deleteAllUserUseCase.deleteAll()
 //    }
-
-    fun setUserRegisteredState(email: String, password: String) {
-        viewModelScope.launch {
-            setUserRegisteredStateUseCase.setUserRegisteredState(email, password)
-        }
-    }
 }

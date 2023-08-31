@@ -6,7 +6,6 @@
     <string name="account">Account</string>
     <string name="phone_number_check">Phone number check</string>
     <string name="verification">Verification</string>
-
     <string name="enter_text">Enter the text</string>
     <string name="name">Name</string>
     <string name="email">E-mail</string>
@@ -16,6 +15,8 @@
     <string name="phone_number">Phone Number</string>
     <string name="continue_text">Continue</string>
     <string name="verify_text">Verify</string>
+    <string name="send_otp_text">Send OTP</string>
+    <string name="exit_text">Exit</string>
 
     <string name="sign_in_user_not_found_message">Account not found, please try again or sign up</string>
     <string name="sign_in_incorrect_pass_message">Incorrect password</string>
@@ -25,11 +26,18 @@
     <string name="check_phone_number_message">Please check your country code and phone number</string>
     <string name="correct_phone_number_message">Please enter correct phone number</string>
     <string name="enter_number_message">Please enter phone number</string>
+    <string name="enter_email_message">Please enter e-mail</string>
     <string name="successful_authentication_message">Successful authentication</string>
+    <string name="correct_otp_message">Please enter correct OTP</string>
+    <string name="user_null_message">User info unavailable, please re-authenticate</string>
+    <string name="wrong_otp_message">You have passed wrong otp key, try again</string>
+    <string name="otp_message">Enter OTP</string>
+    <string name="name_message">Enter your name</string>
 
     <string name="sign_in_with_social_networks">Sign in with social networks</string>
     <string name="google" translatable="false">Google</string>
     <string name="or">Or</string>
+    <string name="also">Also</string>
     <string name="with_phone_number">With phone number</string>
     <string name="sign_out">Sign Out</string>
     <string name="sign_up">Sign Up</string>
@@ -46,8 +54,10 @@
     <string name="addMaster">Add Master</string>
     <string name="addService">Add Service</string>
     <string name="makeOrder">Make Order</string>
+    <string name="save">Save</string>
 
     <string name="your_web_client_id" translatable="false">607161883-tc5te2ivsfi906l4ush7t4rfhfqsj4vv.apps.googleusercontent.com</string>
+<!--    <string name="your_web_client_id" translatable="false">607161883-aq05ppo7m0d5hk9pjpetc4ldhmr2l0qd.apps.googleusercontent.com</string>-->
 
     <string name="empty_fields_warning">Fill all empty fields!</string>
 
