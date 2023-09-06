@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10sp"
-                android:background="@drawable/edit_text"
+                android:background="@drawable/corner_layout"
                 android:padding="5sp"
                 android:text="@string/type"
                 android:textColor="@color/black"

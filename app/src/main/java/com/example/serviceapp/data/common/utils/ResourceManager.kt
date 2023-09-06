@@ -1,4 +1,4 @@
-package com.example.shapel.data.common.utils
+package com.example.serviceapp.data.common.utils
 
 import android.content.Context
 import androidx.annotation.StringRes

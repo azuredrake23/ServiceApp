@@ -7,9 +7,11 @@
     <string name="phone_number_check">Phone number check</string>
     <string name="verification">Verification</string>
     <string name="enter_text">Enter the text</string>
-    <string name="name">Name</string>
-    <string name="email">E-mail</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="new_password">New password</string>
+    <string name="password_update">Password update</string>
     <string name="confirm_password">Confirm password</string>
     <string name="registration">Registration</string>
     <string name="phone_number">Phone Number</string>
@@ -17,22 +19,32 @@
     <string name="verify_text">Verify</string>
     <string name="send_otp_text">Send OTP</string>
     <string name="exit_text">Exit</string>
+    <string name="delete_account_text">Delete account</string>
 
     <string name="sign_in_user_not_found_message">Account not found, please try again or sign up</string>
-    <string name="sign_in_incorrect_pass_message">Incorrect password</string>
+    <string name="incorrect_pass_message">Incorrect password</string>
     <string name="sign_in_success_message">You are successfully signed in!</string>
     <string name="sign_up_success_message">You are successfully signed up!</string>
     <string name="empty_fields_message">Please check that fields are not empty</string>
     <string name="check_phone_number_message">Please check your country code and phone number</string>
     <string name="correct_phone_number_message">Please enter correct phone number</string>
     <string name="enter_number_message">Please enter phone number</string>
-    <string name="enter_email_message">Please enter e-mail</string>
+    <string name="enter_email_message">Please enter email</string>
     <string name="successful_authentication_message">Successful authentication</string>
     <string name="correct_otp_message">Please enter correct OTP</string>
     <string name="user_null_message">User info unavailable, please re-authenticate</string>
     <string name="wrong_otp_message">You have passed wrong otp key, try again</string>
+    <string name="change_username">Change username</string>
     <string name="otp_message">Enter OTP</string>
     <string name="name_message">Enter your name</string>
+    <string name="enter_email_and_pass_message">Enter email and pass</string>
+    <string name="account_deleted_message">Your account successfully deleted</string>
+    <string name="fill_empty_fields_message">Fill empty fields</string>
+    <string name="enter_correct_data_message">Enter correct data</string>
+    <string name="username_changed_message">Username successfully changed</string>
+    <string name="email_changed_message">Email successfully changed</string>
+    <string name="password_changed_message">Password successfully changed</string>
+    <string name="password_mismatch_message">Password mismatch</string>
 
     <string name="sign_in_with_social_networks">Sign in with social networks</string>
     <string name="google" translatable="false">Google</string>
@@ -55,6 +67,11 @@
     <string name="addService">Add Service</string>
     <string name="makeOrder">Make Order</string>
     <string name="save">Save</string>
+    <string name="confirm_data">Confirm data</string>
+    <string name="cancel">Cancel</string>
+    <string name="changing_of_username">Changing of username</string>
+    <string name="change_email">Change email</string>
+    <string name="change_password">Change password</string>
 
     <string name="your_web_client_id" translatable="false">607161883-tc5te2ivsfi906l4ush7t4rfhfqsj4vv.apps.googleusercontent.com</string>
 <!--    <string name="your_web_client_id" translatable="false">607161883-aq05ppo7m0d5hk9pjpetc4ldhmr2l0qd.apps.googleusercontent.com</string>-->
@@ -70,6 +87,8 @@
     <string name="key_user" translatable="false">USER</string>
     <string name="admin">Admin</string>
     <string name="key_admin" translatable="false">ADMIN</string>
+    <string name="country_code" translatable="false">Country code</string>
+    <string name="key_country_code" translatable="false">+91</string>
 
     <string name="language_header">App language</string>
     <string name="key_language_header" translatable="false">LANGUAGE</string>

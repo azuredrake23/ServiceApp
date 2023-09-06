@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/main_fragment"
-        android:name="com.example.serviceapp.ui.fragments.MainFragment"
+        android:name="com.example.serviceapp.ui.common_fragments.MainFragment"
         android:label="@string/app_name"
         tools:layout="@layout/main_fragment">
         <argument
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/add_service_fragment"
-        android:name="com.example.serviceapp.ui.fragments.AddFragment"
+        android:name="com.example.serviceapp.ui.common_fragments.AddFragment"
         android:label="@string/app_name"
         tools:layout="@layout/add_fragment"
         app:enterAnim="@anim/nav_default_enter_anim"
@@ -37,8 +37,22 @@
         app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
     <fragment
+        android:id="@+id/register_fragment"
+        android:name="com.example.serviceapp.ui.firebase_fragments.RegisterFragment"
+        android:label="@string/registration"
+        tools:layout="@layout/register_fragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" >
+        <action
+            android:id="@+id/action_register_fragment_to_main_fragment"
+            app:destination="@id/main_fragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/phone_number_fragment"
-        android:name="com.example.serviceapp.ui.fragments.authorization.PhoneNumberFragment"
+        android:name="com.example.serviceapp.ui.firebase_fragments.PhoneNumberFragment"
         android:label="@string/phone_number_check"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
@@ -52,7 +66,7 @@
 
     <fragment
         android:id="@+id/otp_fragment"
-        android:name="com.example.serviceapp.ui.fragments.authorization.OTPFragment"
+        android:name="com.example.serviceapp.ui.firebase_fragments.OTPFragment"
         android:label="@string/verification"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
@@ -71,11 +85,14 @@
         <action
             android:id="@+id/action_otp_fragment_to_main_fragment"
             app:destination="@id/main_fragment" />
+        <action
+            android:id="@+id/action_otp_fragment_to_register_fragment"
+            app:destination="@id/register_fragment" />
     </fragment>
 
     <fragment
         android:id="@+id/account_fragment"
-        android:name="com.example.serviceapp.ui.fragments.AccountFragment"
+        android:name="com.example.serviceapp.ui.firebase_fragments.AccountFragment"
         android:label="@string/settings"
         tools:layout="@layout/account_fragment"
         app:enterAnim="@anim/nav_default_enter_anim"
@@ -103,7 +120,7 @@
 
     <fragment
         android:id="@+id/login_fragment"
-        android:name="com.example.serviceapp.ui.fragments.authorization.LoginFragment"
+        android:name="com.example.serviceapp.ui.firebase_fragments.LoginFragment"
         android:label="@string/sign_in"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"

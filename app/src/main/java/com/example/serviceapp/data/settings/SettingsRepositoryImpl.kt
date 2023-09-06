@@ -2,8 +2,8 @@ package com.example.serviceapp.data.settings
 
 import com.example.serviceapp.R
 import com.example.serviceapp.data.common.utils.PreferenceManager
-import com.example.shapel.data.common.utils.ResourceManager
-import com.example.shapel.data.domain.settings.SettingsRepository
+import com.example.serviceapp.data.common.utils.ResourceManager
+import com.example.serviceapp.domain.settings.SettingsRepository
 
 class SettingsRepositoryImpl(
     private val prefsManager: PreferenceManager,

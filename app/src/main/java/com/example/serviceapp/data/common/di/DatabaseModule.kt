@@ -2,17 +2,17 @@ package com.example.serviceapp.data.common.di
 
 import android.content.Context
 import com.example.serviceapp.data.common.database.daos.*
-import com.example.serviceapp.data.domain.databases.user_database.UserRepositoryImpl
 import com.example.serviceapp.data.common.database.database.AppDatabase
-import com.example.serviceapp.data.domain.databases.master_database.MasterRepository
-import com.example.serviceapp.data.domain.databases.master_database.MasterRepositoryImpl
-import com.example.serviceapp.data.domain.databases.order_database.BookingRepository
-import com.example.serviceapp.data.domain.databases.order_database.BookingRepositoryImpl
-import com.example.serviceapp.data.domain.databases.service_database.ServiceRepository
-import com.example.serviceapp.data.domain.databases.service_database.ServiceRepositoryImpl
-import com.example.serviceapp.data.domain.databases.user_database.UserRepository
 import com.example.serviceapp.utils.UserManager
-import com.example.shapel.data.common.utils.ResourceManager
+import com.example.serviceapp.data.common.utils.ResourceManager
+import com.example.serviceapp.domain.databases.master_database.MasterRepository
+import com.example.serviceapp.domain.databases.master_database.MasterRepositoryImpl
+import com.example.serviceapp.domain.databases.order_database.BookingRepository
+import com.example.serviceapp.domain.databases.order_database.BookingRepositoryImpl
+import com.example.serviceapp.domain.databases.service_database.ServiceRepository
+import com.example.serviceapp.domain.databases.service_database.ServiceRepositoryImpl
+import com.example.serviceapp.domain.databases.user_database.UserRepository
+import com.example.serviceapp.domain.databases.user_database.UserRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,8 +46,6 @@ class DatabaseModule {
     @Provides
     @Singleton
     fun provideServiceDao(database: AppDatabase): ServiceDao = database.serviceDao()
-
-
 
     @Provides
     @Singleton

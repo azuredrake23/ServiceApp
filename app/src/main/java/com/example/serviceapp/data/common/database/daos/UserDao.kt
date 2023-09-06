@@ -3,7 +3,6 @@ package com.example.serviceapp.data.common.database.daos
 import androidx.room.*
 
 import com.example.serviceapp.data.common.database.entities.User
-import com.example.serviceapp.ui.fragments.models.UserModel
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -23,8 +22,8 @@ interface UserDao {
 //    @Query("SELECT * FROM user WHERE uid IN (:userIds)")
 //    fun loadAllByIds(userIds: IntArray): List<User>
 
-    @Query("SELECT * FROM user WHERE id =:userID")
-    fun getUser(userID: Int): User
+    @Query("SELECT * FROM user WHERE phoneNumber =:phoneNumber")
+    fun getUserByPhoneNumber(phoneNumber: String): User?
 
     @Insert
     suspend fun insertAll(vararg users: User)

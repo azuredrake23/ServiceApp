@@ -14,6 +14,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.serviceapp.R
 import com.example.serviceapp.databinding.ActivityMainBinding
+import com.example.serviceapp.ui.view_models.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

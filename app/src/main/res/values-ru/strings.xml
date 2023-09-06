@@ -7,9 +7,11 @@
     <string name="phone_number_check">Проверка номера телефона</string>
     <string name="verification">Верификация</string>
     <string name="enter_text">Введите текст</string>
-    <string name="name">Имя</string>
-    <string name="email">E-mail</string>
+    <string name="username">Имя пользователя</string>
+    <string name="email">Email</string>
     <string name="password">Пароль</string>
+    <string name="new_password">Новый пароль</string>
+    <string name="password_update">Обновление пароля</string>
     <string name="confirm_password">Подтвердите пароль</string>
     <string name="registration">Регистрация</string>
     <string name="phone_number">Номер телефона</string>
@@ -17,22 +19,32 @@
     <string name="verify_text">Проверить</string>
     <string name="send_otp_text">Выслать код</string>
     <string name="exit_text">Выйти</string>
+    <string name="delete_account_text">Удалить аккаунт</string>
 
     <string name="sign_in_user_not_found_message">Аккаунт не найден, повторите попытку или зарегестрируйтесь</string>
-    <string name="sign_in_incorrect_pass_message">Неправильный пароль</string>
+    <string name="incorrect_pass_message">Неправильный пароль</string>
     <string name="sign_in_success_message">Вы успешно вошли!</string>
     <string name="sign_up_success_message">Вы успешно зарегистрировались!</string>
     <string name="empty_fields_message">Пожалуйста, проверьте, не пустые ли поля</string>
     <string name="check_phone_number_message">Пожалуйста, проверьте код страны и номер телефона</string>
     <string name="correct_phone_number_message">Пожалуйста, введите верный телефонный номер</string>
     <string name="enter_number_message">Пожалуйста, введите телефонный номер</string>
-    <string name="enter_email_message">Пожалуйста, введите e-mail</string>
+    <string name="enter_email_message">Пожалуйста, введите email</string>
     <string name="successful_authentication_message">Успешная авторизация</string>
     <string name="correct_otp_message">Пожалуйста, введите корректный ОТП</string>
     <string name="user_null_message">Информация пользователя недоступна, пожалуйста, аутентифицируйтесь снова</string>
     <string name="wrong_otp_message">Вы указали неправильный одноразовый пароль, попробуйте снова</string>
+    <string name="change_username">Изменить имя пользователя</string>
     <string name="otp_message">Введите ОТП</string>
     <string name="name_message">Введите ваше имя</string>
+    <string name="enter_email_and_pass_message">Введите email и пароль</string>
+    <string name="account_deleted_message">Ваш аккаунт успешно удалён</string>
+    <string name="fill_empty_fields_message">Заполните пустые поля</string>
+    <string name="enter_correct_data_message">Введите правильные данные</string>
+    <string name="username_changed_message">Имя пользователя успешно изменено</string>
+    <string name="email_changed_message">Email успешно изменён</string>
+    <string name="password_changed_message">Пароль успешно изменён</string>
+    <string name="password_mismatch_message">Пароли не совпадают</string>
 
     <string name="sign_in_with_social_networks">Войти через соцсети</string>
     <string name="or">Или</string>
@@ -54,6 +66,11 @@
     <string name="addService">Добавить услугу</string>
     <string name="makeOrder">Заказать</string>
     <string name="save">Сохранить</string>
+    <string name="confirm_data">Подтвердите данные</string>
+    <string name="cancel">Закрыть</string>
+    <string name="changing_of_username">Изменение имени пользователя</string>
+    <string name="change_email">Изменить email</string>
+    <string name="change_password">Изменить пароль</string>
 
     <string name="empty_fields_warning">Заполните все пустые поля!</string>
 

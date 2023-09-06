@@ -2,9 +2,8 @@ package com.example.serviceapp.utils
 
 import android.content.Context
 import com.example.serviceapp.data.common.database.entities.User
-import com.example.serviceapp.data.entities.Errors
-import com.example.serviceapp.ui.fragments.models.UserModel
-import com.example.shapel.data.common.utils.ResourceManager
+import com.example.serviceapp.ui.common_fragments.models.UserModel
+import com.example.serviceapp.data.common.utils.ResourceManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow

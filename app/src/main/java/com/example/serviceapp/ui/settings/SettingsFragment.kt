@@ -12,8 +12,8 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.example.serviceapp.R
-import com.example.serviceapp.ui.utils.mappers.AccessMapper
-import com.example.serviceapp.ui.utils.mappers.AppLanguageMapper
+import com.example.serviceapp.utils.mappers.AccessMapper
+import com.example.serviceapp.utils.mappers.AppLanguageMapper
 import com.example.serviceapp.utils.Constants
 import com.google.android.material.snackbar.Snackbar
 
@@ -55,7 +55,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun openAccessWindow() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Access check")
-        val dialogLayout = layoutInflater.inflate(R.layout.custom_access_dialog, null)
+        val dialogLayout = layoutInflater.inflate(R.layout.access_dialog, null)
         val login = dialogLayout.findViewById<EditText>(R.id.textAccessEmail)
         val password = dialogLayout.findViewById<EditText>(R.id.textAccessPassword)
 

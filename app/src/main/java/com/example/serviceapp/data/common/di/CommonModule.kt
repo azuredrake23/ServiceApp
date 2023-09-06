@@ -2,7 +2,7 @@ package com.example.serviceapp.data.common.di
 
 import android.content.Context
 import com.example.serviceapp.data.common.utils.PreferenceManager
-import com.example.shapel.data.common.utils.ResourceManager
+import com.example.serviceapp.data.common.utils.ResourceManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,6 +23,5 @@ class CommonModule {
     @Provides
     fun provideResourceManager(@ApplicationContext context: Context): ResourceManager =
         ResourceManager(context)
-
 
 }
