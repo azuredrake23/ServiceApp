@@ -4,8 +4,7 @@ import com.example.serviceapp.data.common.database.entities.User
 import com.example.serviceapp.domain.databases.user_database.UserRepository
 import javax.inject.Inject
 
-class GetUserUseCase @Inject constructor (private val userRepository: UserRepository){
-
-    fun isUserExistsByPhoneNumber(phoneNumber: String): Boolean = userRepository.isUserExistsByPhoneNumber(phoneNumber)
-
+class GetUserUseCase @Inject constructor(private val userRepository: UserRepository){
+    suspend fun getUser(email: String? = null, phoneNumber: String? = null): User? =
+        userRepository.getUser(email, phoneNumber)
 }

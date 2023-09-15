@@ -10,7 +10,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="10sp"
+        android:layout_margin="15sp"
         android:background="@drawable/cloud_layout"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -73,7 +73,7 @@
                         android:layout_marginStart="15dp"
                         android:gravity="center|start"
                         android:padding="10dp"
-                        android:text="@string/changing_of_username"
+                        android:text="@string/change_username"
                         android:textSize="20sp"
                         app:drawableEndCompat="@drawable/arrow_right" />
                 </LinearLayout>
@@ -193,7 +193,7 @@
     <TextView
         android:id="@+id/exit_button"
         android:layout_width="0dp"
-        android:layout_height="48dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="32dp"
         android:background="@drawable/cloud_layout"
         android:focusable="true"
@@ -210,7 +210,7 @@
     <TextView
         android:id="@+id/delete_button"
         android:layout_width="0dp"
-        android:layout_height="48dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="32dp"
         android:background="@drawable/cloud_layout"
         android:focusable="true"

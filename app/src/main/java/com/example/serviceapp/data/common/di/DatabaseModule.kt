@@ -3,8 +3,6 @@ package com.example.serviceapp.data.common.di
 import android.content.Context
 import com.example.serviceapp.data.common.database.daos.*
 import com.example.serviceapp.data.common.database.database.AppDatabase
-import com.example.serviceapp.utils.UserManager
-import com.example.serviceapp.data.common.utils.ResourceManager
 import com.example.serviceapp.domain.databases.master_database.MasterRepository
 import com.example.serviceapp.domain.databases.master_database.MasterRepositoryImpl
 import com.example.serviceapp.domain.databases.order_database.BookingRepository
@@ -49,24 +47,11 @@ class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideUserManager(
-        @ApplicationContext context: Context,
-        resourceManager: ResourceManager
-    ): UserManager =
-        UserManager(
-            context,
-            Dispatchers.Main,
-            CoroutineScope(SupervisorJob() + Dispatchers.Main),
-            resourceManager
-        )
-
-    @Provides
-    @Singleton
     fun provideMasterDaoRepository(masterDao: MasterDao): MasterRepository = MasterRepositoryImpl(masterDao)
 
     @Provides
     @Singleton
-    fun provideUserDaoRepository(userDao: UserDao, userManager: UserManager): UserRepository = UserRepositoryImpl(userDao, userManager)
+    fun provideUserDaoRepository(userDao: UserDao): UserRepository = UserRepositoryImpl(userDao)
 
     @Provides
     @Singleton

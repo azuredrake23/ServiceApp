@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class UpdateUserUseCase @Inject constructor (private val userRepository: UserRepository) {
 
-    suspend fun update(user: User) {
-        userRepository.update(user)
+    suspend fun update(oldEmail: String, oldPhoneNumber: String, user: User) {
+        userRepository.update(oldEmail, oldPhoneNumber, user)
     }
 }

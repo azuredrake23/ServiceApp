@@ -1,15 +1,16 @@
 package com.example.serviceapp.ui.common_fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.core.os.bundleOf
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -22,16 +23,14 @@ import com.example.serviceapp.data.common.database.entities.Master
 import com.example.serviceapp.data.common.database.entities.Service
 import com.example.serviceapp.data.common.utils.PreferenceManager
 import com.example.serviceapp.databinding.MainFragmentBinding
-import com.example.serviceapp.ui.view_models.database_view_models.MasterDatabaseViewModel
-import com.example.serviceapp.ui.view_models.database_view_models.ServiceDatabaseViewModel
-import com.example.serviceapp.ui.view_models.database_view_models.UserDatabaseViewModel
 import com.example.serviceapp.ui.common_fragments.models.UserModel
 import com.example.serviceapp.ui.common_fragments.recycler_view.Card
 import com.example.serviceapp.ui.common_fragments.recycler_view.CardAdapter
-import com.example.serviceapp.utils.mappers.Access
 import com.example.serviceapp.ui.view_models.MainFragmentViewModel
-import com.example.serviceapp.ui.view_models.firebase_view_models.FirebaseViewModel
-import com.google.firebase.auth.FirebaseUser
+import com.example.serviceapp.ui.view_models.database_view_models.MasterDatabaseViewModel
+import com.example.serviceapp.ui.view_models.database_view_models.ServiceDatabaseViewModel
+import com.example.serviceapp.ui.view_models.database_view_models.UserDatabaseViewModel
+import com.example.serviceapp.utils.mappers.Access
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -120,15 +119,15 @@ class MainFragment : Fragment(R.layout.main_fragment) {
                 when (menuItem.itemId) {
                     R.id.settings_fragment -> {
                         isSettingsFragment = true
-                            findNavController().navigate(
-                                R.id.settings_fragment
-                            )
+                        findNavController().navigate(
+                            R.id.settings_fragment
+                        )
                     }
 
                     R.id.account_fragment -> {
-                            findNavController().navigate(
-                                R.id.account_fragment
-                            )
+                        findNavController().navigate(
+                            R.id.account_fragment
+                        )
                     }
                 }
                 return true
@@ -201,6 +200,25 @@ class MainFragment : Fragment(R.layout.main_fragment) {
 
     private fun setPrefs() {
         setAccessState()
+        setBackstackDisable()
+    }
+
+    private fun setBackstackDisable() {
+        (requireActivity() as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
+        val callback = object : OnBackPressedCallback(
+            true
+        ) {
+            override fun handleOnBackPressed() {
+                val a = Intent(Intent.ACTION_MAIN)
+                a.addCategory(Intent.CATEGORY_HOME)
+                a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(a)
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            callback
+        )
     }
 
     private fun setAccessState() {

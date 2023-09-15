@@ -2,11 +2,12 @@ package com.example.serviceapp.domain.databases.user_database.usecase
 
 import com.example.serviceapp.data.common.database.entities.User
 import com.example.serviceapp.domain.databases.user_database.UserRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
-class InsertAllUsersUseCase @Inject constructor (private val userRepository: UserRepository){
+class GetAllUsersUseCase @Inject constructor (userRepository: UserRepository){
 
-    suspend fun insertAll(vararg users: User) {
-        userRepository.insertAll(*users)
-    }
+    val getAllUsersUseCase: Flow<List<User>> = userRepository.getAllUsers()
+
 }

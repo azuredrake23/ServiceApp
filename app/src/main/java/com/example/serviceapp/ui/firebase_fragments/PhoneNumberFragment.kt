@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -15,8 +16,10 @@ import com.example.serviceapp.data.common.utils.showToast
 import com.example.serviceapp.databinding.PhoneNumberFragmentBinding
 import com.example.serviceapp.ui.view_models.database_view_models.UserDatabaseViewModel
 import com.example.serviceapp.ui.view_models.firebase_view_models.FirebaseViewModel
+import com.google.android.gms.auth.api.identity.SignInCredential
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException
@@ -29,8 +32,8 @@ import java.util.concurrent.TimeUnit
 @AndroidEntryPoint
 class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
     private val binding by viewBinding(PhoneNumberFragmentBinding::bind)
-    private val userViewModel: UserDatabaseViewModel by viewModels()
-    private val firebaseViewModel: FirebaseViewModel by viewModels()
+    private val userViewModel: UserDatabaseViewModel by activityViewModels()
+    private val firebaseViewModel: FirebaseViewModel by activityViewModels()
 
     private lateinit var preferenceManager: PreferenceManager
 
@@ -61,29 +64,13 @@ class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-        firebaseAuth.signInWithCredential(credential)
-            .addOnCompleteListener(requireActivity()) { task ->
-                if (task.isSuccessful) {
-                    showToast(
-                        requireContext(),
-                        getString(R.string.successful_authentication_message)
-                    )
-                } else {
-                    showToast(
-                        requireContext(),
-                        getString(R.string.wrong_otp_message)
-                    )
-                }
-            }
-    }
-
     private fun setupUI() {
         with(binding) {
             countryCode =
                 preferenceManager.get(resources.getString(R.string.country_code), "+91")
             ccp.setOnCountryChangeListener {
                 countryCode = ccp.selectedCountryCode.toString()
+                preferenceManager.put(getString(R.string.country_code), ccp.selectedCountryCode)
             }
             continueButton.setOnClickListener {
                 if (editTextPhone.text.isNotEmpty()) {
@@ -98,6 +85,7 @@ class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
                         )
                     }
                 } else {
+                    editTextPhone.error = getString(R.string.fill_empty_fields_message)
                     showToast(requireContext(), getString(R.string.enter_number_message))
                 }
             }
@@ -107,7 +95,7 @@ class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
     private val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
         override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-            signInWithPhoneAuthCredential(credential)
+
         }
 
         override fun onVerificationFailed(e: FirebaseException) {

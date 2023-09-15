@@ -15,7 +15,6 @@ import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.serviceapp.R
@@ -24,9 +23,14 @@ import com.example.serviceapp.databinding.AccountFragmentBinding
 import com.example.serviceapp.ui.view_models.database_view_models.UserDatabaseViewModel
 import com.example.serviceapp.ui.view_models.firebase_view_models.FirebaseViewModel
 import com.example.serviceapp.utils.DialogType
+import com.example.serviceapp.utils.SignInState
 import com.example.serviceapp.utils.SignUpState
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -34,14 +38,13 @@ import dagger.hilt.android.AndroidEntryPoint
 class AccountFragment : Fragment(R.layout.account_fragment) {
     private val binding by viewBinding(AccountFragmentBinding::bind)
     private val userViewModel: UserDatabaseViewModel by activityViewModels()
-    private val firebaseViewModel: FirebaseViewModel by viewModels()
+    private val firebaseViewModel: FirebaseViewModel by activityViewModels()
 
     private val firebaseAuth by lazy {
         firebaseViewModel.firebaseAuth
     }
-
-    private val firebaseUser by lazy {
-        firebaseViewModel.firebaseUser!!
+    private val firebaseRealtimeDatabaseUserReference by lazy {
+        firebaseViewModel.firebaseRealtimeDatabaseUserReference
     }
 
     lateinit var dialogView: View
@@ -78,11 +81,12 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                 )
             }
             exitButton.setOnClickListener {
-                firebaseAuth.signOut()
+                firebaseViewModel.updateSignInState(SignInState.UnsignedIn)
                 findNavController().navigate(R.id.login_fragment)
             }
             deleteButton.setOnClickListener {
                 firebaseViewModel.updateSignUpState(SignUpState.UnsignedUp)
+                firebaseViewModel.updateSignInState(SignInState.UnsignedIn)
                 dialogView = LayoutInflater.from(context).inflate(R.layout.password_dialog, null)
                 dialogVerification(
                     DialogType.DELETE,
@@ -119,19 +123,22 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
     ) {
         when (dialogType) {
             DialogType.USERNAME -> {
-                val username = view.findViewById<EditText>(R.id.username).text.toString()
-                val usernamePassword =
-                    view.findViewById<EditText>(R.id.usernamePassword).text.toString()
-                if (username.isNotEmpty() && usernamePassword.isNotEmpty()) {
+                val username = view.findViewById<EditText>(R.id.username)
+                val password =
+                    view.findViewById<EditText>(R.id.usernamePassword)
+                initEditTextListeners(username, password)
+                val usernameText = username.text.toString()
+                val passwordText = password.text.toString()
+                if (usernameText.isNotEmpty() && passwordText.isNotEmpty()) {
                     val credential = EmailAuthProvider
-                        .getCredential(binding.changeEmailView.text.toString(), usernamePassword)
-                    firebaseUser.reauthenticate(credential)
+                        .getCredential(binding.changeEmailView.text.toString(), passwordText)
+                    firebaseAuth.currentUser!!.reauthenticate(credential)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
-                                binding.changeUsernameView.text = username
-                                firebaseUser.updateProfile(
+                                binding.changeUsernameView.text = usernameText
+                                firebaseAuth.currentUser!!.updateProfile(
                                     userProfileChangeRequest {
-                                        displayName = username
+                                        displayName = usernameText
                                     })
                                 showToast(
                                     requireContext(),
@@ -145,6 +152,7 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                             }
                         }
                 } else {
+                    setWrongData(username, password)
                     showToast(
                         requireContext(),
                         getString(R.string.fill_empty_fields_message)
@@ -153,16 +161,19 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
             }
 
             DialogType.EMAIL -> {
-                val email = view.findViewById<EditText>(R.id.email).text.toString()
-                val emailPassword = view.findViewById<EditText>(R.id.emailPassword).text.toString()
-                if (email.isNotEmpty() && emailPassword.isNotEmpty()) {
+                val email = view.findViewById<EditText>(R.id.email)
+                val password = view.findViewById<EditText>(R.id.emailPassword)
+                initEditTextListeners(email, password)
+                val emailText = email.text.toString()
+                val passwordText = password.text.toString()
+                if (emailText.isNotEmpty() && passwordText.isNotEmpty()) {
                     val credential = EmailAuthProvider
-                        .getCredential(binding.changeEmailView.text.toString(), emailPassword)
-                    firebaseUser.reauthenticate(credential)
+                        .getCredential(binding.changeEmailView.text.toString(), passwordText)
+                    firebaseAuth.currentUser!!.reauthenticate(credential)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
-                                binding.changeEmailView.text = email
-                                firebaseUser.updateEmail(email)
+                                binding.changeEmailView.text = emailText
+                                firebaseAuth.currentUser!!.updateEmail(emailText)
                                 showToast(
                                     requireContext(),
                                     getString(R.string.email_changed_message)
@@ -175,22 +186,28 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                             }
                         }
                 } else {
+                    setWrongData(email, password)
                     showToast(requireContext(), getString(R.string.fill_empty_fields_message))
                 }
             }
 
             DialogType.PASSWORD -> {
                 val updatePassword =
-                    view.findViewById<EditText>(R.id.updatePassword).text.toString()
+                    view.findViewById<EditText>(R.id.updatePassword)
                 val updateNewPassword =
-                    view.findViewById<EditText>(R.id.updateNewPassword).text.toString()
-                if (updatePassword.isNotEmpty() && updateNewPassword.isNotEmpty()) {
+                    view.findViewById<EditText>(R.id.updateNewPassword)
+                initEditTextListeners(updatePassword, updateNewPassword)
+                val updatePasswordText =
+                    updatePassword.text.toString()
+                val updateNewPasswordText =
+                    updateNewPassword.text.toString()
+                if (updatePasswordText.isNotEmpty() && updateNewPasswordText.isNotEmpty()) {
                     val credential = EmailAuthProvider
-                        .getCredential(binding.changeEmailView.text.toString(), updatePassword)
-                    firebaseUser.reauthenticate(credential)
+                        .getCredential(binding.changeEmailView.text.toString(), updatePasswordText)
+                    firebaseAuth.currentUser!!.reauthenticate(credential)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
-                                firebaseUser.updatePassword(updateNewPassword)
+                                firebaseAuth.currentUser!!.updatePassword(updateNewPasswordText)
                                 showToast(
                                     requireContext(),
                                     getString(R.string.password_changed_message)
@@ -203,26 +220,47 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                             }
                         }
                 } else {
+                    setWrongData(updatePassword, updateNewPassword)
                     showToast(requireContext(), getString(R.string.fill_empty_fields_message))
                 }
             }
 
             DialogType.DELETE -> {
                 val confirmPassword =
-                    view.findViewById<EditText>(R.id.confirmPassword).text.toString()
-                if (confirmPassword.isNotEmpty()) {
+                    view.findViewById<EditText>(R.id.confirmPassword)
+                initEditTextListeners(view1 = confirmPassword)
+                val confirmPasswordText =
+                    confirmPassword.text.toString()
+                if (confirmPasswordText.isNotEmpty()) {
                     val credential = EmailAuthProvider
-                        .getCredential(binding.changeEmailView.text.toString(), confirmPassword)
-                    firebaseUser.reauthenticate(credential)
-                        .addOnCompleteListener {
+                        .getCredential(binding.changeEmailView.text.toString(), confirmPasswordText)
+                    firebaseAuth.currentUser!!.reauthenticate(credential)
+                        .addOnCompleteListener { it ->
                             if (it.isSuccessful) {
-                                firebaseAuth.signOut()
-                                firebaseUser.delete()
-                                findNavController().navigate(R.id.login_fragment)
-                                showToast(
-                                    requireContext(),
-                                    getString(R.string.account_deleted_message)
-                                )
+//                                firebaseAuth.signOut()
+                                firebaseRealtimeDatabaseUserReference
+                                    .equalTo(firebaseAuth.currentUser!!.uid)
+                                    .addListenerForSingleValueEvent(object :
+                                        ValueEventListener {
+                                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                            dataSnapshot.ref.removeValue()
+                                        }
+
+                                        override fun onCancelled(error: DatabaseError) {
+                                            TODO("Not yet implemented")
+                                        }
+
+                                    })
+                                firebaseAuth.currentUser!!.delete().addOnCompleteListener {
+                                    if (it.isSuccessful) {
+                                        firebaseAuth.signOut()
+                                        findNavController().navigate(R.id.login_fragment)
+                                        showToast(
+                                            requireContext(),
+                                            getString(R.string.account_deleted_message)
+                                        )
+                                    }
+                                }
                             } else {
                                 showToast(
                                     requireContext(),
@@ -231,6 +269,7 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                             }
                         }
                 } else {
+                    setWrongData(view1 = confirmPassword)
                     showToast(
                         requireContext(),
                         getString(R.string.fill_empty_fields_message)
@@ -241,18 +280,31 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
         dialog.dismiss()
     }
 
+    private fun initEditTextListeners(view1: EditText, view2: EditText? = null) {
+        view1.setOnClickListener {
+            it.setBackgroundResource(R.drawable.normal_borders_text)
+        }
+        view2?.setOnClickListener {
+            it.setBackgroundResource(R.drawable.normal_borders_text)
+        }
+    }
+
+    private fun setWrongData(view1: View, view2: View? = null) {
+        view1.setBackgroundResource(R.drawable.red_borders_text)
+        view2?.setBackgroundResource(R.drawable.red_borders_text)
+    }
+
     private fun setObservers() {
         with(userViewModel) {
 
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun initFragment() {
         with(binding) {
-            changeUsernameView.text = firebaseUser.displayName
-            changeEmailView.text = firebaseUser.email
-            phoneNumber.text = firebaseUser.phoneNumber
+            changeUsernameView.text = firebaseAuth.currentUser!!.displayName
+            changeEmailView.text = firebaseAuth.currentUser!!.email
+            phoneNumber.text = firebaseAuth.currentUser!!.phoneNumber
         }
     }
 
@@ -278,7 +330,7 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 // There are no request codes
-                firebaseUser.updateProfile(
+                firebaseAuth.currentUser!!.updateProfile(
                     userProfileChangeRequest {
                         binding.profileImage.setImageURI(result.data!!.data)
                         photoUri = result.data!!.data

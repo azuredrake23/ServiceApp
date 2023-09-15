@@ -9,7 +9,6 @@
         android:id="@+id/otpEditText1"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginStart="24dp"
         android:background="@drawable/corner_layout"
         android:backgroundTint="@color/space_y"
         android:digits="0123456789"
@@ -22,10 +21,8 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toStartOf="@+id/otpEditText2"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline"
-        app:layout_constraintVertical_bias="0.516" />
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
 
     <EditText
         android:id="@+id/otpEditText2"
@@ -115,7 +112,6 @@
         android:id="@+id/otpEditText6"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="24dp"
         android:background="@drawable/corner_layout"
         android:backgroundTint="@color/space_y"
         android:digits="0123456789"
@@ -151,18 +147,16 @@
     <TextView
         android:id="@+id/verify_button"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="32dp"
         android:background="@drawable/custom_button"
         android:gravity="center"
         android:text="@string/continue_text"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/otpEditText6"
+        app:layout_constraintStart_toStartOf="@+id/otpEditText1" />
 
     <TextView
         android:id="@+id/resendTv"

@@ -3,19 +3,28 @@ package com.example.serviceapp.domain.databases.user_database
 import androidx.annotation.WorkerThread
 import com.example.serviceapp.data.common.database.daos.UserDao
 import com.example.serviceapp.data.common.database.entities.User
-import com.example.serviceapp.ui.common_fragments.models.UserModel
-import com.example.serviceapp.utils.UserManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asFlow
 
-class UserRepositoryImpl(private val userDao: UserDao, private val userManager: UserManager) :
-    UserRepository {
+class UserRepositoryImpl(private val userDao: UserDao) : UserRepository {
 
-    override fun getUsersDataList(): Flow<List<User>> = userDao.getAllUsers()
+    @WorkerThread
+    override fun getAllUsers(): Flow<List<User>> = userDao.getAllUsers()
 
-    override fun getUserData(): SharedFlow<UserModel.UserDataWithSignInState> = userManager.userDataWithSignInState
+    @WorkerThread
+    override suspend fun isUserExistsByPhone(phoneNumber: String): Boolean =
+        userDao.isUserExistsByPhone(phoneNumber) != 0
 
-    override fun isUserExistsByPhoneNumber(phoneNumber: String): Boolean = userDao.getUserByPhoneNumber(phoneNumber) != null
+    @WorkerThread
+    override suspend fun isUserExistsByEmail(email: String): Boolean =
+        userDao.isUserExistsByEmail(email) != 0
+
+    @WorkerThread
+    override suspend fun getUser(email: String?, phoneNumber: String?): User? =
+        userDao.getUser(email, phoneNumber)
+
 
 //    override fun loadAllByIds(userIds: IntArray) {
 //        userDao.loadAllByIds(userIds)
@@ -25,28 +34,33 @@ class UserRepositoryImpl(private val userDao: UserDao, private val userManager: 
 //        userDao.findByName()
 //    }
 
-    override suspend fun insertAll(vararg users: User) {
-        userDao.insertAll(*users)
-    }
+//    @WorkerThread
+//    override suspend fun insertAll(vararg users: User) {
+//        userDao.insertAll(*users)
+//    }
 
     @WorkerThread
     override suspend fun insert(user: User) {
         userDao.insert(user)
     }
 
+    @WorkerThread
+    override suspend fun update(
+        oldEmail: String,
+        oldPhoneNumber: String,
+        user: User
+    ) {
+        userDao.update(oldEmail, oldPhoneNumber, user)
+    }
+
+    @WorkerThread
+    override suspend fun delete(email: String?, phoneNumber: String?) {
+        userDao.delete(email, phoneNumber)
+    }
+
+    @WorkerThread
     override suspend fun deleteAll() {
         userDao.deleteAll()
     }
 
-    override suspend fun delete(user: User) {
-        userDao.delete(user)
-    }
-
-    override suspend fun updateAll(vararg users: User) {
-        userDao.updateAll(*users)
-    }
-
-    override suspend fun update(user: User) {
-        userDao.update(user)
-    }
 }
