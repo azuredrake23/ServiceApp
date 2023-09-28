@@ -1,13 +1,11 @@
 package com.example.serviceapp.ui.firebase_fragments
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.serviceapp.R
@@ -16,11 +14,9 @@ import com.example.serviceapp.data.common.utils.showToast
 import com.example.serviceapp.databinding.PhoneNumberFragmentBinding
 import com.example.serviceapp.ui.view_models.database_view_models.UserDatabaseViewModel
 import com.example.serviceapp.ui.view_models.firebase_view_models.FirebaseViewModel
-import com.google.android.gms.auth.api.identity.SignInCredential
+import com.example.serviceapp.utils.DownloadDialog
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException
 import com.google.firebase.auth.PhoneAuthCredential
@@ -43,6 +39,9 @@ class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
     private val firebaseAuth by lazy {
         firebaseViewModel.firebaseAuth
     }
+    private val downloadDialog by lazy {
+        DownloadDialog(requireContext())
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -51,10 +50,11 @@ class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupUI()
+        initFragment()
     }
 
     private fun verifyPhoneNumber(phoneNumber: String) {
+        downloadDialog.showDownloadDialog()
         val options = PhoneAuthOptions.newBuilder(firebaseAuth)
             .setPhoneNumber(phoneNumber) // Phone number to verify
             .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
@@ -64,7 +64,7 @@ class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
-    private fun setupUI() {
+    private fun initFragment() {
         with(binding) {
             countryCode =
                 preferenceManager.get(resources.getString(R.string.country_code), "+91")
@@ -85,7 +85,7 @@ class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
                         )
                     }
                 } else {
-                    editTextPhone.error = getString(R.string.fill_empty_fields_message)
+                    editTextPhone.error = getString(R.string.enter_value_message)
                     showToast(requireContext(), getString(R.string.enter_number_message))
                 }
             }
@@ -122,6 +122,7 @@ class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
             verificationId: String,
             token: PhoneAuthProvider.ForceResendingToken,
         ) {
+            downloadDialog.cancelDownloadDialog()
             findNavController().navigate(
                 R.id.otp_fragment,
                 bundleOf(

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/main_fragment"
-        android:name="com.example.serviceapp.ui.common_fragments.MainFragment"
+        android:name="com.example.serviceapp.ui.main.MainFragment"
         android:label="@string/app_name"
         tools:layout="@layout/main_fragment">
         <argument
@@ -28,9 +28,9 @@
 
     <fragment
         android:id="@+id/add_service_fragment"
-        android:name="com.example.serviceapp.ui.common_fragments.AddFragment"
+        android:name="com.example.serviceapp.ui.common_fragments.SubmitFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/add_fragment"
+        tools:layout="@layout/submit_fragment"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -92,7 +92,7 @@
 
     <fragment
         android:id="@+id/account_fragment"
-        android:name="com.example.serviceapp.ui.firebase_fragments.AccountFragment"
+        android:name="com.example.serviceapp.ui.common_fragments.AccountFragment"
         android:label="@string/settings"
         tools:layout="@layout/account_fragment"
         app:enterAnim="@anim/nav_default_enter_anim"
@@ -111,7 +111,7 @@
 
     <fragment
         android:id="@+id/settings_fragment"
-        android:name="com.example.serviceapp.ui.settings.SettingsFragment"
+        android:name="com.example.serviceapp.ui.common_fragments.SettingsFragment"
         android:label="@string/settings"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"

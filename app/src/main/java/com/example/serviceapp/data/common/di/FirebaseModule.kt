@@ -15,6 +15,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,7 +44,11 @@ class FirebaseModule {
 
     @Singleton
     @Provides
-    fun provideFirebaseRealtimeDatabaseUserReference(): DatabaseReference = FirebaseDatabase.getInstance("https://service-app-e0bb2-default-rtdb.firebaseio.com").reference.child("users")
+    fun provideFirebaseRealtimeDatabaseUserRef(): DatabaseReference = FirebaseDatabase.getInstance("https://service-app-e0bb2-default-rtdb.firebaseio.com").reference.child("users")
+
+    @Singleton
+    @Provides
+    fun provideFirebaseStorage(): StorageReference = FirebaseStorage.getInstance().reference.child("avatars")
 
     @Singleton
     @Provides

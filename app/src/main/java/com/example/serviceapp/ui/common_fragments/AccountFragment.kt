@@ -1,25 +1,40 @@
-package com.example.serviceapp.ui.firebase_fragments
+package com.example.serviceapp.ui.common_fragments
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.app.Activity
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.serviceapp.R
 import com.example.serviceapp.data.common.utils.showToast
 import com.example.serviceapp.databinding.AccountFragmentBinding
+import com.example.serviceapp.ui.common_fragments.models.ValidationState
+import com.example.serviceapp.ui.view_models.MainViewModel
 import com.example.serviceapp.ui.view_models.database_view_models.UserDatabaseViewModel
 import com.example.serviceapp.ui.view_models.firebase_view_models.FirebaseViewModel
 import com.example.serviceapp.utils.DialogType
@@ -29,25 +44,37 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
+import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import java.io.File
 
 
 @AndroidEntryPoint
 class AccountFragment : Fragment(R.layout.account_fragment) {
     private val binding by viewBinding(AccountFragmentBinding::bind)
+    private val mainViewModel: MainViewModel by activityViewModels()
     private val userViewModel: UserDatabaseViewModel by activityViewModels()
     private val firebaseViewModel: FirebaseViewModel by activityViewModels()
 
     private val firebaseAuth by lazy {
         firebaseViewModel.firebaseAuth
     }
-    private val firebaseRealtimeDatabaseUserReference by lazy {
-        firebaseViewModel.firebaseRealtimeDatabaseUserReference
+
+    private val firebaseRealtimeDatabaseUserRef by lazy {
+        firebaseViewModel.firebaseRealtimeDatabaseUserRef
     }
 
-    lateinit var dialogView: View
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+    private lateinit var getContent: ActivityResultLauncher<String>
+    private lateinit var uCropContract: ActivityResultContract<List<Uri>, Uri>
+    private lateinit var cropImage: ActivityResultLauncher<List<Uri>>
+    private lateinit var userAvatarDir: File
+    private lateinit var userAvatarFile: File
+    private lateinit var dialogView: View
+    private lateinit var validationList: List<ValidationState>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -56,17 +83,24 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
         setListeners()
     }
 
+    override fun onStart() {
+        super.onStart()
+        initUserAvatarDir()
+    }
+
     private fun setListeners() {
         with(binding) {
             changeUsernameView.setOnClickListener {
-                dialogView = LayoutInflater.from(context).inflate(R.layout.username_dialog, null)
+                dialogView =
+                    LayoutInflater.from(context).inflate(R.layout.username_dialog, null)
                 dialogVerification(
                     DialogType.USERNAME,
                     dialogView
                 )
             }
             changeEmailView.setOnClickListener {
-                dialogView = LayoutInflater.from(context).inflate(R.layout.email_dialog, null)
+                dialogView =
+                    LayoutInflater.from(context).inflate(R.layout.email_dialog, null)
                 dialogVerification(
                     DialogType.EMAIL,
                     dialogView
@@ -74,7 +108,8 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
             }
             changePasswordView.setOnClickListener {
                 dialogView =
-                    LayoutInflater.from(context).inflate(R.layout.new_password_dialog, null)
+                    LayoutInflater.from(context)
+                        .inflate(R.layout.new_password_dialog, null)
                 dialogVerification(
                     DialogType.PASSWORD,
                     dialogView
@@ -87,13 +122,15 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
             deleteButton.setOnClickListener {
                 firebaseViewModel.updateSignUpState(SignUpState.UnsignedUp)
                 firebaseViewModel.updateSignInState(SignInState.UnsignedIn)
-                dialogView = LayoutInflater.from(context).inflate(R.layout.password_dialog, null)
+                dialogView =
+                    LayoutInflater.from(context).inflate(R.layout.password_dialog, null)
                 dialogVerification(
                     DialogType.DELETE,
                     dialogView
                 )
             }
             photoFL.setOnClickListener {
+                createUserAvatar()
                 startMediaPermissionRequest()
             }
         }
@@ -103,17 +140,17 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
         dialogType: DialogType,
         view: View
     ) {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle(getString(R.string.confirm_data))
-        builder.setPositiveButton("OK") { dialog, which ->
+        val dialog = AlertDialog.Builder(context).setPositiveButton("OK", null)
+            .setNegativeButton(getString(R.string.cancel), null).setView(view).show()
+        val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+//        builder.setTitle(getString(R.string.confirm_data))
+        positiveButton.setOnClickListener {
             dialogPositiveButtonListener(dialog, dialogType, view)
         }
-        builder.setView(view)
-        builder.setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+        negativeButton.setOnClickListener {
             dialog.cancel()
         }
-        val dialog = builder.create()
-        dialog.show()
     }
 
     private fun dialogPositiveButtonListener(
@@ -129,12 +166,27 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                 initEditTextListeners(username, password)
                 val usernameText = username.text.toString()
                 val passwordText = password.text.toString()
+                mainViewModel.validateFields(listOf(usernameText, passwordText))
+                validationList.forEach {
+                    when (it){
+                        is ValidationState.Success -> {it.text} // что-то сделать с полями и/или изменить лист, чтобы он соответсвовал всем полям и работал корректно
+                        is ValidationState.Error -> {it.messageStringId}
+                        is ValidationState.Inactive -> {it}
+                    }
+                }
+                when (validationList) {
+
+                }
                 if (usernameText.isNotEmpty() && passwordText.isNotEmpty()) {
                     val credential = EmailAuthProvider
-                        .getCredential(binding.changeEmailView.text.toString(), passwordText)
+                        .getCredential(
+                            binding.changeEmailView.text.toString(),
+                            passwordText
+                        )
                     firebaseAuth.currentUser!!.reauthenticate(credential)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
+                                dialog.dismiss()
                                 binding.changeUsernameView.text = usernameText
                                 firebaseAuth.currentUser!!.updateProfile(
                                     userProfileChangeRequest {
@@ -145,33 +197,41 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                                     getString(R.string.username_changed_message)
                                 )
                             } else {
-                                showToast(
-                                    requireContext(),
-                                    getString(R.string.incorrect_pass_message)
-                                )
+                                password.error = getString(R.string.incorrect_pass_message)
                             }
                         }
-                } else {
-                    setWrongData(username, password)
-                    showToast(
-                        requireContext(),
-                        getString(R.string.fill_empty_fields_message)
-                    )
+                }
+
+                if (usernameText.isNotEmpty() && passwordText.isEmpty()) {
+                    password.error = "This field is empty"
+                }
+
+                if (usernameText.isEmpty() && passwordText.isNotEmpty()) {
+                    username.error = "This field is empty"
+                }
+
+                if (usernameText.isEmpty() && passwordText.isEmpty()) {
+                    password.error = "This field is empty"
+                    username.error = "This field is empty"
                 }
             }
 
             DialogType.EMAIL -> {
-                val email = view.findViewById<EditText>(R.id.email)
-                val password = view.findViewById<EditText>(R.id.emailPassword)
+                val email = view.findViewById<EditText>(R.id.textAccessEmail)
+                val password = view.findViewById<EditText>(R.id.textAccessPassword)
                 initEditTextListeners(email, password)
                 val emailText = email.text.toString()
                 val passwordText = password.text.toString()
                 if (emailText.isNotEmpty() && passwordText.isNotEmpty()) {
                     val credential = EmailAuthProvider
-                        .getCredential(binding.changeEmailView.text.toString(), passwordText)
+                        .getCredential(
+                            binding.changeEmailView.text.toString(),
+                            passwordText
+                        )
                     firebaseAuth.currentUser!!.reauthenticate(credential)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
+                                dialog.dismiss()
                                 binding.changeEmailView.text = emailText
                                 firebaseAuth.currentUser!!.updateEmail(emailText)
                                 showToast(
@@ -187,7 +247,10 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                         }
                 } else {
                     setWrongData(email, password)
-                    showToast(requireContext(), getString(R.string.fill_empty_fields_message))
+                    showToast(
+                        requireContext(),
+                        getString(R.string.enter_value_message)
+                    )
                 }
             }
 
@@ -203,11 +266,17 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                     updateNewPassword.text.toString()
                 if (updatePasswordText.isNotEmpty() && updateNewPasswordText.isNotEmpty()) {
                     val credential = EmailAuthProvider
-                        .getCredential(binding.changeEmailView.text.toString(), updatePasswordText)
+                        .getCredential(
+                            binding.changeEmailView.text.toString(),
+                            updatePasswordText
+                        )
                     firebaseAuth.currentUser!!.reauthenticate(credential)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
-                                firebaseAuth.currentUser!!.updatePassword(updateNewPasswordText)
+                                dialog.dismiss()
+                                firebaseAuth.currentUser!!.updatePassword(
+                                    updateNewPasswordText
+                                )
                                 showToast(
                                     requireContext(),
                                     getString(R.string.password_changed_message)
@@ -221,7 +290,10 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                         }
                 } else {
                     setWrongData(updatePassword, updateNewPassword)
-                    showToast(requireContext(), getString(R.string.fill_empty_fields_message))
+                    showToast(
+                        requireContext(),
+                        getString(R.string.enter_value_message)
+                    )
                 }
             }
 
@@ -233,12 +305,15 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                     confirmPassword.text.toString()
                 if (confirmPasswordText.isNotEmpty()) {
                     val credential = EmailAuthProvider
-                        .getCredential(binding.changeEmailView.text.toString(), confirmPasswordText)
+                        .getCredential(
+                            binding.changeEmailView.text.toString(),
+                            confirmPasswordText
+                        )
                     firebaseAuth.currentUser!!.reauthenticate(credential)
                         .addOnCompleteListener { it ->
                             if (it.isSuccessful) {
 //                                firebaseAuth.signOut()
-                                firebaseRealtimeDatabaseUserReference
+                                firebaseRealtimeDatabaseUserRef
                                     .equalTo(firebaseAuth.currentUser!!.uid)
                                     .addListenerForSingleValueEvent(object :
                                         ValueEventListener {
@@ -251,16 +326,18 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                                         }
 
                                     })
-                                firebaseAuth.currentUser!!.delete().addOnCompleteListener {
-                                    if (it.isSuccessful) {
-                                        firebaseAuth.signOut()
-                                        findNavController().navigate(R.id.login_fragment)
-                                        showToast(
-                                            requireContext(),
-                                            getString(R.string.account_deleted_message)
-                                        )
+                                firebaseAuth.currentUser!!.delete()
+                                    .addOnCompleteListener {
+                                        if (it.isSuccessful) {
+                                            dialog.dismiss()
+                                            firebaseAuth.signOut()
+                                            findNavController().navigate(R.id.login_fragment)
+                                            showToast(
+                                                requireContext(),
+                                                getString(R.string.account_deleted_message)
+                                            )
+                                        }
                                     }
-                                }
                             } else {
                                 showToast(
                                     requireContext(),
@@ -272,12 +349,11 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                     setWrongData(view1 = confirmPassword)
                     showToast(
                         requireContext(),
-                        getString(R.string.fill_empty_fields_message)
+                        getString(R.string.enter_value_message)
                     )
                 }
             }
         }
-        dialog.dismiss()
     }
 
     private fun initEditTextListeners(view1: EditText, view2: EditText? = null) {
@@ -298,50 +374,104 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
         with(userViewModel) {
 
         }
+        with(mainViewModel) {
+            listDialogFieldsState.flowWithLifecycle(
+                viewLifecycleOwner.lifecycle,
+                Lifecycle.State.STARTED
+            ).onEach {
+                validationList = it
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }
     }
 
     private fun initFragment() {
         with(binding) {
+            initContracts()
             changeUsernameView.text = firebaseAuth.currentUser!!.displayName
             changeEmailView.text = firebaseAuth.currentUser!!.email
             phoneNumber.text = firebaseAuth.currentUser!!.phoneNumber
         }
     }
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            openSomeActivityForResult()
-        } else {
-            // PERMISSION NOT GRANTED
-            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), -1)
-        }
-    }
-
-    private fun startMediaPermissionRequest() {
-        if (Build.VERSION.SDK_INT <= 32)
-            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-        else if (Build.VERSION.SDK_INT > 32)
-            requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
-    }
-
-    private var resultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                // There are no request codes
-                firebaseAuth.currentUser!!.updateProfile(
-                    userProfileChangeRequest {
-                        binding.profileImage.setImageURI(result.data!!.data)
-                        photoUri = result.data!!.data
-                    })
+    private fun initContracts() {
+        requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            if (isGranted) {
+                getContent.launch("image/*")
             }
         }
 
-    private fun openSomeActivityForResult() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        resultLauncher.launch(intent)
+        getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null) {
+                val inputUri: Uri = uri
+                cropImage.launch(listOf(inputUri, userAvatarFile.toUri()))
+            }
+        }
+
+        uCropContract = object : ActivityResultContract<List<Uri>, Uri>() {
+            override fun createIntent(context: Context, input: List<Uri>): Intent {
+                val inputUri = input[0]
+                val outputUri = input[1]
+                val uCropOptions = UCrop.Options()
+                uCropOptions.setCircleDimmedLayer(true)
+                val uCrop = UCrop.of(inputUri, outputUri)
+                    .withAspectRatio(1F, 1F)
+                    .withOptions(uCropOptions)
+                return uCrop.getIntent(requireContext())
+            }
+
+            override fun parseResult(resultCode: Int, intent: Intent?): Uri {
+                return UCrop.getOutput(intent!!)!!
+            }
+        }
+
+        cropImage = registerForActivityResult(uCropContract) { uri ->
+            downloadUserAvatar(uri)
+        }
     }
 
+    private fun initUserAvatarDir() {
+        userAvatarDir = File(requireContext().filesDir, "userAvatar")
+        if (userAvatarDir.exists()) {
+            downloadUserAvatar(userAvatarDir.listFiles()?.get(0)!!.toUri())
+        } else {
+            userAvatarDir.mkdirs()
+        }
+    }
 
+    private fun downloadUserAvatar(uri: Uri) {
+        Glide.with(requireContext())
+            .asBitmap()
+            .load(uri)
+            .apply(RequestOptions.circleCropTransform())
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    binding.profileImage.setImageBitmap(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    // this is called when imageView is cleared on lifecycle call or for
+                    // some other reason.
+                    // if you are referencing the bitmap somewhere else too other than this imageView
+                    // clear it here as you can no longer have the bitmap
+                }
+            })
+    }
+
+    private fun createUserAvatar() {
+        if (userAvatarDir.listFiles()?.isNotEmpty() == true) {
+            userAvatarDir.listFiles()?.get(0)!!.delete()
+        }
+        userAvatarFile = File(userAvatarDir, "${System.currentTimeMillis()}.jpg")
+        userAvatarFile.createNewFile()
+    }
+
+    private fun startMediaPermissionRequest() {
+        if (Build.VERSION.SDK_INT <= 32) {
+            requestPermissionLauncher.launch(READ_EXTERNAL_STORAGE)
+        } else if (Build.VERSION.SDK_INT > 32) {
+            requestPermissionLauncher.launch(READ_MEDIA_IMAGES)
+        }
+    }
 }

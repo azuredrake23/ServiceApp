@@ -10,7 +10,7 @@ import com.example.serviceapp.data.common.database.entities.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Database(entities = [User::class, Booking::class, Service::class, Master::class], version = 2, exportSchema = true)
+@Database(entities = [User::class, Booking::class, Service::class, Master::class], version = 1, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun masterDao(): MasterDao

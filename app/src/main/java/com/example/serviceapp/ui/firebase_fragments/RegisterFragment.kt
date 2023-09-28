@@ -47,7 +47,6 @@ class RegisterFragment : Fragment(R.layout.register_fragment) {
                             firebaseAuth.currentUser!!.reauthenticate(requireArguments().getParcelable("credentials")!!).addOnCompleteListener {
                                 firebaseAuth.currentUser!!.updateEmail(emailEnter.text.toString())
                                 firebaseAuth.currentUser!!.updatePassword(passwordEnter.text.toString())
-                                val firebaseUser = firebaseAuth.currentUser!!
                                 findNavController().navigate(R.id.main_fragment)
                             }
                         }
@@ -60,17 +59,6 @@ class RegisterFragment : Fragment(R.layout.register_fragment) {
                     nameEnter.setText(firebaseAuth.currentUser!!.displayName)
                     emailEnter.isEnabled = false
                     emailEnter.setText(firebaseAuth.currentUser!!.email)
-                    println("--------------------------------------INIT REGISTER FRAGMENT--------------------------------------")
-                    println(firebaseAuth.currentUser!!.providerData[0].providerId)
-                    println(firebaseAuth.currentUser!!.providerData[1].providerId)
-                    println(firebaseAuth.currentUser!!.providerData[0].email.toString())
-                    println(firebaseAuth.currentUser!!.providerData[1].email.toString())
-                    println(firebaseAuth.currentUser!!.providerData[0].phoneNumber.toString())
-                    println(firebaseAuth.currentUser!!.providerData[1].phoneNumber.toString())
-                    println(firebaseAuth.currentUser!!.providerData[0].displayName.toString())
-                    println(firebaseAuth.currentUser!!.providerData[1].displayName.toString())
-                    println(firebaseAuth.currentUser!!.providerData[0].isEmailVerified.toString())
-                    println(firebaseAuth.currentUser!!.providerData[1].isEmailVerified.toString())
                     firebaseViewModel.updateSignUpState(SignUpState.SignedUp)
                     continueButton.setOnClickListener {
                         if (nameEnter.text.toString() != "" && emailEnter.text.toString() != "" && passwordEnter.text.toString() != "")

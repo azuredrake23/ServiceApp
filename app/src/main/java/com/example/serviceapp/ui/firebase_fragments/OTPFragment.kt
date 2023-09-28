@@ -9,14 +9,12 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.serviceapp.R
@@ -27,20 +25,16 @@ import com.example.serviceapp.ui.view_models.database_view_models.UserDatabaseVi
 import com.example.serviceapp.ui.view_models.firebase_view_models.FirebaseViewModel
 import com.example.serviceapp.utils.SignInState
 import com.example.serviceapp.utils.SignUpState
-import com.google.android.gms.auth.api.identity.SignInCredential
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
-import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
-import com.google.firebase.auth.ktx.userProfileChangeRequest
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
@@ -53,7 +47,7 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
         firebaseViewModel.firebaseAuth
     }
     private val firebaseRealtimeDatabaseUserReference by lazy {
-        firebaseViewModel.firebaseRealtimeDatabaseUserReference
+        firebaseViewModel.firebaseRealtimeDatabaseUserRef
     }
 
     private lateinit var currentUser: User
@@ -66,7 +60,7 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
         super.onViewCreated(view, savedInstanceState)
         setObservers()
         setListeners()
-        initLayout()
+        initFragment()
     }
 
     private fun setListeners() {
@@ -100,7 +94,7 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
         }
     }
 
-    private fun initLayout() {
+    private fun initFragment() {
         updateFields()
         resendOTPTvVisibility()
         with(binding) {
@@ -199,6 +193,7 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
                         firebaseRealtimeDatabaseUserReference.child(firebaseAuth.currentUser!!.uid)
                             .setValue(
                                 User(
+                                    photo = firebaseAuth.currentUser!!.photoUrl.toString(),
                                     displayName = firebaseAuth.currentUser!!.displayName,
                                     email = firebaseAuth.currentUser!!.email,
                                     phoneNumber = firebaseAuth.currentUser!!.phoneNumber
@@ -215,7 +210,6 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
                 firebaseAuth.signInWithCredential(credential)
                     .addOnCompleteListener(requireActivity()) { task ->
                         if (task.isSuccessful) {
-                            val user = firebaseAuth.currentUser!!
                             if (firebaseAuth.currentUser!!.email != null) {
                                 firebaseViewModel.updateSignUpState(SignUpState.SignedUp)
                                 findNavController().navigate(R.id.main_fragment)

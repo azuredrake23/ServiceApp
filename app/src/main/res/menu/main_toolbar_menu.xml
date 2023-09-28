@@ -10,7 +10,7 @@
         <menu>
             <item
                 android:id="@+id/account_fragment"
-                android:icon="@drawable/account"
+                android:icon="@drawable/account_icon"
                 android:title="@string/account"
                 app:showAsAction="ifRoom" />
             <item

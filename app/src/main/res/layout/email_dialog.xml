@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/very_light_grey"
+    android:background="@color/white"
     android:orientation="vertical"
     android:padding="15dp">
 
@@ -19,12 +19,12 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:boxBackgroundColor="@android:color/white">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/email"
+            android:id="@+id/textAccessEmail"
             android:maxLength="40"
+            android:background="@drawable/normal_borders_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/email" />
@@ -35,13 +35,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        app:boxBackgroundColor="@android:color/white"
         app:passwordToggleEnabled="true">
 
         <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/emailPassword"
+            android:id="@+id/textAccessPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/normal_borders_text"
             android:hint="@string/password" />
 
     </com.google.android.material.textfield.TextInputLayout>

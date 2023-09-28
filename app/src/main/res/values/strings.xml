@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    String resources
     <string name="app_name">Service App</string>
     <string name="sign_in">Sign In</string>
     <string name="settings">Settings</string>
@@ -20,32 +22,6 @@
     <string name="send_otp_text">Send OTP</string>
     <string name="exit_text">Exit</string>
     <string name="delete_account_text">Delete account</string>
-
-    <string name="sign_in_user_not_found_message">Account not found, please try again or sign up</string>
-    <string name="incorrect_pass_message">Incorrect password</string>
-    <string name="sign_in_success_message">You are successfully signed in!</string>
-    <string name="sign_up_success_message">You are successfully signed up!</string>
-    <string name="empty_fields_message">Please check that fields are not empty</string>
-    <string name="check_phone_number_message">Please check your country code and phone number</string>
-    <string name="correct_phone_number_message">Please enter correct phone number</string>
-    <string name="enter_number_message">Please enter phone number</string>
-    <string name="enter_email_message">Please enter email</string>
-    <string name="successful_authentication_message">Successful authentication</string>
-    <string name="correct_otp_message">Please enter correct OTP</string>
-    <string name="user_null_message">User info unavailable, please re-authenticate</string>
-    <string name="wrong_otp_message">You have passed wrong otp key, try again</string>
-    <string name="change_username">Change username</string>
-    <string name="otp_message">Enter OTP</string>
-    <string name="name_message">Enter your name</string>
-    <string name="enter_email_and_pass_message">Enter email and pass</string>
-    <string name="account_deleted_message">Your account successfully deleted</string>
-    <string name="fill_empty_fields_message">Fill empty fields</string>
-    <string name="enter_correct_data_message">Enter correct data</string>
-    <string name="username_changed_message">Username successfully changed</string>
-    <string name="email_changed_message">Email successfully changed</string>
-    <string name="password_changed_message">Password successfully changed</string>
-    <string name="password_mismatch_message">Password mismatch</string>
-
     <string name="sign_in_with_social_networks">Sign in with social networks</string>
     <string name="google" translatable="false">Google</string>
     <string name="or">Or</string>
@@ -65,6 +41,7 @@
     <string name="employeeId">Employee ID</string>
     <string name="addMaster">Add Master</string>
     <string name="addService">Add Service</string>
+    <string name="submit">Submit</string>
     <string name="makeOrder">Make Order</string>
     <string name="save">Save</string>
     <string name="confirm_data">Confirm data</string>
@@ -72,12 +49,38 @@
     <string name="changing_of_username">Changing of username</string>
     <string name="change_email">Change email</string>
     <string name="change_password">Change password</string>
+    <string name="announcement">Announcements</string>
 
+    Text notification
+    <string name="sign_in_user_not_found_message">Account not found, please try again or sign up</string>
+    <string name="incorrect_pass_message">Incorrect password</string>
+    <string name="sign_in_success_message">You are successfully signed in!</string>
+    <string name="sign_up_success_message">You are successfully signed up!</string>
+    <string name="check_phone_number_message">Please check your country code and phone number</string>
+    <string name="correct_phone_number_message">Please enter correct phone number</string>
+    <string name="enter_number_message">Please enter phone number</string>
+    <string name="enter_email_message">Please enter email</string>
+    <string name="successful_authentication_message">Successful authentication</string>
+    <string name="correct_otp_message">Please enter correct OTP</string>
+    <string name="user_null_message">User info unavailable, please re-authenticate</string>
+    <string name="wrong_otp_message">You have passed wrong otp key, try again</string>
+    <string name="change_username">Change username</string>
+    <string name="otp_message">Enter OTP</string>
+    <string name="name_message">Enter your name</string>
+    <string name="enter_email_and_pass_message">Enter email and pass</string>
+    <string name="account_deleted_message">Your account successfully deleted</string>
+    <string name="enter_value_message">Value required</string>
+    <string name="enter_correct_data_message">Enter correct data</string>
+    <string name="username_changed_message">Username successfully changed</string>
+    <string name="email_changed_message">Email successfully changed</string>
+    <string name="password_changed_message">Password successfully changed</string>
+    <string name="password_mismatch_message">Password mismatch</string>
+    <string name="image_loading_error_message">Image loading error!</string>
+
+    Key
     <string name="your_web_client_id" translatable="false">607161883-tc5te2ivsfi906l4ush7t4rfhfqsj4vv.apps.googleusercontent.com</string>
-<!--    <string name="your_web_client_id" translatable="false">607161883-aq05ppo7m0d5hk9pjpetc4ldhmr2l0qd.apps.googleusercontent.com</string>-->
 
-    <string name="empty_fields_warning">Fill all empty fields!</string>
-
+    Saved values
     <string name="view_type">View type</string>
     <string name="russian">Russian</string>
     <string name="key_russian" translatable="false">RUSSIAN</string>
@@ -95,11 +98,10 @@
     <string name="access_header">Access</string>
     <string name="key_access_header" translatable="false">ACCESS</string>
 
-    <string name="common_preferences_title">Common settings</string>
-    <string name="access_title">Access</string>
-    <string name="language_title">Application language</string>
-
     <string name="access" translatable="false">ACCESS</string>
     <string name="key_access" translatable="false">USER</string>
 
+    <string name="common_preferences_title">Common settings</string>
+    <string name="access_title">Access</string>
+    <string name="language_title">Application language</string>
 </resources>

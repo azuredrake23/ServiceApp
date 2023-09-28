@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/announcement"
+        android:enabled="true"
+        android:icon="@drawable/announcement_icon"
+        android:title="@string/announcement"/>
+    <item
+        android:id="@+id/submit"
+        android:enabled="true"
+        android:icon="@drawable/add_icon"
+        android:title="@string/submit"/>
+    <item
+        android:id="@+id/account"
+        android:enabled="true"
+        android:icon="@drawable/account_icon"
+        android:title="@string/account"/>
+    <item
+        android:id="@+id/settings"
+        android:enabled="true"
+        android:icon="@drawable/settings_icon"
+        android:title="@string/settings"/>
+</menu>

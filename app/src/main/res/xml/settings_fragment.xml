@@ -19,16 +19,7 @@
             app:title="@string/language_title"
             app:useSimpleSummaryProvider="true" />
 
-        <DropDownPreference
-            app:defaultValue="@string/key_user"
-            app:entries="@array/preference_access_labels"
-            app:entryValues="@array/preference_access_keys"
-            app:key="@string/key_access_header"
-            app:title="@string/access_title"
-            app:useSimpleSummaryProvider="true"
-        />
-
-<!--        <SwitchPreference-->
+        <!--        <SwitchPreference-->
 <!--            app:summaryOff="@string/UHF"-->
 <!--            app:summaryOn="@string/G"-->
 <!--            app:defaultValue="@string/key_connection"-->

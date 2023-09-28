@@ -9,12 +9,10 @@ import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.getValue
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,7 +27,8 @@ import javax.inject.Inject
 class FirebaseViewModel @Inject constructor(
     val firebaseAuth: FirebaseAuth,
     val firebaseDatabase: FirebaseDatabase,
-    var firebaseRealtimeDatabaseUserReference: DatabaseReference,
+    val firebaseRealtimeDatabaseUserRef: DatabaseReference,
+    val firebaseStorageRef: StorageReference,
     val oneTapClient: SignInClient,
     val signInRequest: BeginSignInRequest
 ) : ViewModel() {

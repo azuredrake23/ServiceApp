@@ -1,4 +1,4 @@
-package com.example.serviceapp.ui.settings
+package com.example.serviceapp.ui.common_fragments
 
 import android.annotation.SuppressLint
 import android.graphics.Color

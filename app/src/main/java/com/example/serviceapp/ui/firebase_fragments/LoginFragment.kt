@@ -44,7 +44,7 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
         firebaseViewModel.firebaseAuth
     }
     private val firebaseRealtimeDatabaseUserReference by lazy {
-        firebaseViewModel.firebaseRealtimeDatabaseUserReference
+        firebaseViewModel.firebaseRealtimeDatabaseUserRef
     }
     private val oneTapClient by lazy {
         firebaseViewModel.oneTapClient
@@ -59,7 +59,6 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
     private lateinit var activityResultLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     private var idToken: String? = null
-    private var currentUser: User? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -142,6 +141,9 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
                                 firebaseAuth.currentUser!!.updateProfile(
                                     userProfileChangeRequest {
                                         displayName = googleCredential.displayName
+                                        if (googleCredential.profilePictureUri != null){
+                                            photoUri = googleCredential.profilePictureUri
+                                        }
                                     })
                                 firebaseAuth.currentUser!!.updateEmail(
                                     googleCredential.id
@@ -162,9 +164,6 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
 
     private fun setObservers() {
         with(userViewModel) {
-            user.flowWithLifecycle(viewLifecycleOwner.lifecycle).onEach {
-                currentUser = it
-            }
         }
     }
 
