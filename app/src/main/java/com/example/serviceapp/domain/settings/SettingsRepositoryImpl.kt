@@ -1,4 +1,4 @@
-package com.example.serviceapp.data.settings
+package com.example.serviceapp.domain.settings
 
 import com.example.serviceapp.R
 import com.example.serviceapp.data.common.utils.PreferenceManager

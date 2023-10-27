@@ -1,4 +1,4 @@
-package com.example.serviceapp.ui.common_fragments.models
+package com.example.serviceapp.data.models
 
 sealed class UserModel {
     data class UserData(var userName: String? = null, var userEmail: String? = null, var userPhone: String? = null)

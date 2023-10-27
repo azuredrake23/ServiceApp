@@ -1,4 +1,4 @@
-package com.example.serviceapp.ui.common_fragments.recycler_view
+package com.example.serviceapp.data.adapter.recycler_view
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.serviceapp.R
 import com.example.serviceapp.databinding.RecyclerViewElementBinding
-import com.example.serviceapp.ui.common_fragments.models.UserModel
+import com.example.serviceapp.data.models.UserModel
 
 class CardAdapter(
     private val navController: NavController,

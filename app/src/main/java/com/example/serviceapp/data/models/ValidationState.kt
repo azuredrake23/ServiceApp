@@ -1,4 +1,4 @@
-package com.example.serviceapp.ui.common_fragments.models
+package com.example.serviceapp.data.models
 
 sealed class ValidationState {
     data class Error(val messageStringId: Int) : ValidationState()

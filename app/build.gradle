@@ -159,9 +159,6 @@ dependencies {
 
     implementation 'com.google.android.material:material:1.11.0-alpha02'
 
-    //Picasso
-    implementation 'com.squareup.picasso:picasso:2.8'
-
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.12.0'
 

@@ -9,8 +9,9 @@
     <string name="phone_number_check">Проверка номера телефона</string>
     <string name="verification">Верификация</string>
     <string name="enter_text">Введите текст</string>
-    <string name="username">Имя пользователя</string>
+    <string name="new_username">Новое имя пользователя</string>
     <string name="email">Email</string>
+    <string name="new_email">Новый email</string>
     <string name="password">Пароль</string>
     <string name="new_password">Новый пароль</string>
     <string name="password_update">Обновление пароля</string>
@@ -75,6 +76,7 @@
     <string name="password_changed_message">Пароль успешно изменён</string>
     <string name="password_mismatch_message">Пароли не совпадают</string>
     <string name="image_loading_error_message">Ошибка загрузки изображения!</string>
+    <string name="empty_field_error_message">Пустое поле!</string>
 
     <string name="view_type">Тип видимости</string>
     <string name="russian">Русский</string>

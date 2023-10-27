@@ -4,56 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/login_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <!--    <LinearLayout-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:orientation="vertical"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent">-->
-
-    <!--        <TextView-->
-    <!--            android:id="@+id/tvEnter"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_margin="10sp"-->
-    <!--            android:gravity="center"-->
-    <!--            android:text="@string/registerEnter"-->
-    <!--            android:textColor="@color/black"-->
-    <!--            android:textSize="25sp"-->
-    <!--            android:textStyle="bold" />-->
-
-    <!--        <EditText-->
-    <!--            android:id="@+id/textLogin"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_margin="10sp"-->
-    <!--            android:hint="@string/enter_login"-->
-    <!--            android:minHeight="48dp" />-->
-
-    <!--        <EditText-->
-    <!--            android:id="@+id/textPassword"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_margin="10sp"-->
-    <!--            android:ems="10"-->
-    <!--            android:hint="@string/enter_password"-->
-    <!--            android:inputType="textPassword"-->
-    <!--            android:minHeight="48dp" />-->
-
-    <!--        <EditText-->
-    <!--            android:id="@+id/textConfirmPassword"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_margin="10sp"-->
-    <!--            android:ems="10"-->
-    <!--            android:hint="@string/confirm_password"-->
-    <!--            android:minHeight="48dp" />-->
-
-    <!--    </LinearLayout>-->
+    android:layout_height="match_parent"
+    android:background="@color/very_light_grey">
 
     <LinearLayout
         android:id="@+id/linearLayout4"
@@ -112,59 +64,6 @@
 
     </LinearLayout>
 
-    <!--    <LinearLayout-->
-    <!--        android:id="@+id/linearLayout3"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginHorizontal="24dp"-->
-    <!--        android:background="@drawable/edit_text"-->
-    <!--        android:orientation="vertical"-->
-    <!--        android:padding="20dp"-->
-    <!--        app:layout_constraintBottom_toTopOf="@+id/guideline3"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent">-->
-
-    <!--        <TextView-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_marginBottom="24dp"-->
-    <!--            android:gravity="center"-->
-    <!--            android:text="@string/enter_email_message"-->
-    <!--            android:textColor="@android:color/black"-->
-    <!--            android:textSize="20sp" />-->
-
-    <!--        <EditText-->
-    <!--            android:id="@+id/emailED"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="48dp"-->
-    <!--            android:background="@drawable/edit_text"-->
-    <!--            android:drawableStart="@drawable/email"-->
-    <!--            android:drawablePadding="12dp"-->
-    <!--            android:ems="10"-->
-    <!--            android:hint="@string/email"-->
-    <!--            android:inputType="textEmailAddress"-->
-    <!--            android:paddingStart="12sp"-->
-    <!--            android:paddingEnd="12sp"-->
-    <!--            android:textColor="@color/black"-->
-    <!--            android:textSize="14sp" />-->
-
-    <!--        <TextView-->
-    <!--            android:id="@+id/continue_login_button"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:background="@drawable/simple_styled_button"-->
-    <!--            android:gravity="center"-->
-    <!--            android:layout_marginTop="24dp"-->
-    <!--            android:text="@string/continue_text"-->
-    <!--            android:padding="5sp"-->
-    <!--            android:textColor="@color/white"-->
-    <!--            android:textSize="16sp"-->
-    <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--            app:layout_constraintEnd_toEndOf="parent"-->
-    <!--            app:layout_constraintStart_toStartOf="parent" />-->
-
-    <!--    </LinearLayout>-->
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
         android:layout_width="wrap_content"
@@ -178,18 +77,5 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="244dp" />
-
-    <!--    <TextView-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:gravity="center"-->
-    <!--        android:padding="5sp"-->
-    <!--        android:text="@string/also"-->
-    <!--        android:textColor="@color/black"-->
-    <!--        android:textSize="16sp"-->
-    <!--        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,28 +3,35 @@ package com.example.serviceapp.ui.firebase_fragments
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.core.content.ContentProviderCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.serviceapp.R
 import com.example.serviceapp.data.common.database.entities.User
 import com.example.serviceapp.data.common.utils.showToast
+import com.example.serviceapp.data.models.DownloadDialogState
 import com.example.serviceapp.databinding.OtpFragmentBinding
-import com.example.serviceapp.ui.view_models.database_view_models.UserDatabaseViewModel
-import com.example.serviceapp.ui.view_models.firebase_view_models.FirebaseViewModel
-import com.example.serviceapp.utils.SignInState
-import com.example.serviceapp.utils.SignUpState
+import com.example.serviceapp.domain.view_models.database_view_models.UserDatabaseViewModel
+import com.example.serviceapp.domain.view_models.firebase_view_models.FirebaseViewModel
+import com.example.serviceapp.data.models.SignInState
+import com.example.serviceapp.data.models.SignUpState
+import com.example.serviceapp.domain.view_models.MainViewModel
+import com.example.serviceapp.utils.DownloadDialog
+import com.google.android.play.integrity.internal.m
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -35,22 +42,15 @@ import com.google.firebase.auth.PhoneAuthProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class OTPFragment : Fragment(R.layout.otp_fragment) {
     private val binding by viewBinding(OtpFragmentBinding::bind)
+    private val mainViewModel: MainViewModel by activityViewModels()
     private val firebaseViewModel: FirebaseViewModel by activityViewModels()
-    private val userViewModel: UserDatabaseViewModel by activityViewModels()
 
-    private val firebaseAuth by lazy {
-        firebaseViewModel.firebaseAuth
-    }
-    private val firebaseRealtimeDatabaseUserReference by lazy {
-        firebaseViewModel.firebaseRealtimeDatabaseUserRef
-    }
-
-    private lateinit var currentUser: User
     private var fragmentPhoneNumber: String = ""
     private var fragmentOTP: String = ""
     private var fragmentResendToken: PhoneAuthProvider.ForceResendingToken? = null
@@ -65,38 +65,10 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
 
     private fun setListeners() {
         addTextChangeListener()
+        buttonListeners()
     }
 
-    private fun setObservers() {
-        with(firebaseViewModel) {
-            user.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                .onEach {
-                    currentUser = it
-                }
-            phoneNumber.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                .onEach {
-                    fragmentPhoneNumber = it
-                }.launchIn(lifecycleScope)
-            OTP.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .onEach {
-                    fragmentOTP = it
-                }.launchIn(viewLifecycleOwner.lifecycleScope)
-            resendToken.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                .onEach {
-                    fragmentResendToken = it
-                }.launchIn(lifecycleScope)
-        }
-        with(userViewModel) {
-//            user.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-//                .onEach {
-//                    currentUser = it
-//                }
-        }
-    }
-
-    private fun initFragment() {
-        updateFields()
-        resendOTPTvVisibility()
+    private fun buttonListeners() {
         with(binding) {
             verifyButton.setOnClickListener {
                 if (typedOTP.length == 6 && !typedOTP.contains(" ")) {
@@ -104,11 +76,63 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
                 }
             }
             resendTv.setOnClickListener {
-                resendVerificationCode()
+                firebaseViewModel.verifyPhoneNumber(
+                    requireActivity(),
+                    fragmentPhoneNumber,
+                    true,
+                    fragmentResendToken!!
+                )
                 resendOTPTvVisibility()
             }
-            progressBar.visibility = View.INVISIBLE
         }
+    }
+
+    private fun setObservers() {
+        with (mainViewModel){
+            popupValue.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
+                showToast(requireContext(), it)
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
+            navigateFragmentValue.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
+                findNavController().navigate(
+                    it.first, it.second
+                )
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
+            downloadDialogState.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
+                checkDownloadDialogState(requireActivity(), it)
+            }
+        }
+        with(firebaseViewModel) {
+            phoneNumber.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).onEach {
+                    fragmentPhoneNumber = it
+                }.launchIn(lifecycleScope)
+            OTP.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
+                    fragmentOTP = it
+                }.launchIn(viewLifecycleOwner.lifecycleScope)
+            resendToken.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).onEach {
+                    fragmentResendToken = it
+                }.launchIn(lifecycleScope)
+
+            isWrongOTP.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
+                if (it) {
+                    setEmptyEditTexts()
+                    typedOTP = "      "
+                    mainViewModel.popupMessage(getString(R.string.wrong_otp_message))
+                }
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
+            progressBarVisibility.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
+                when (it) {
+                    View.INVISIBLE -> binding.progressBar.visibility = View.INVISIBLE
+                    View.VISIBLE -> binding.progressBar.visibility = View.VISIBLE
+                    View.GONE -> binding.progressBar.visibility = View.GONE
+                }
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }
+    }
+
+    private fun initFragment() {
+        updateFields()
+        resendOTPTvVisibility()
+        binding.progressBar.visibility = View.INVISIBLE
     }
 
     private fun resendOTPTvVisibility() {
@@ -117,7 +141,7 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
             resendTv.visibility = View.INVISIBLE
             resendTv.isEnabled = false
 
-            Handler().postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 resendTv.visibility = View.VISIBLE
                 resendTv.isEnabled = true
             }, 60000)
@@ -125,10 +149,11 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
     }
 
     private fun updateFields() {
-        firebaseViewModel.updatePhoneNumber(requireArguments().getString("phoneNumber")!!)
-        firebaseViewModel.updateOTP(requireArguments().getString("verificationId")!!)
-        firebaseViewModel.updateResendToken(requireArguments().getParcelable("token")!!)
-
+        with(firebaseViewModel) {
+            updatePhoneNumber(requireArguments().getString("phoneNumber")!!)
+            updateOTP(requireArguments().getString("verificationId")!!)
+            updateResendToken(requireArguments().getParcelable("token")!!)
+        }
     }
 
     private fun setEmptyEditTexts() {
@@ -142,107 +167,13 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
         }
     }
 
-    private fun resendVerificationCode() {
-        val options = PhoneAuthOptions.newBuilder(firebaseAuth)
-            .setPhoneNumber(fragmentPhoneNumber) // Phone number to verify
-            .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
-            .setActivity(requireActivity()) // Activity (for callback binding)
-            .setCallbacks(callbacks)
-            .setForceResendingToken(fragmentResendToken!!)// OnVerificationStateChangedCallbacks
-            .build()
-        PhoneAuthProvider.verifyPhoneNumber(options)
-
-    }
-
-    private val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-
-        override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-            signInWithPhoneAuthCredential(credential)
-        }
-
-        override fun onVerificationFailed(e: FirebaseException) {
-            when (e) {
-                is FirebaseAuthInvalidCredentialsException -> {
-                    showToast(requireContext(), e.message.toString())
-                }
-
-                is FirebaseTooManyRequestsException -> {
-                    showToast(requireContext(), e.message.toString())
-                }
-
-                is FirebaseAuthMissingActivityForRecaptchaException -> {
-                    showToast(requireContext(), e.message.toString())
-                }
-            }
-        }
-
-        override fun onCodeSent(
-            verificationId: String,
-            token: PhoneAuthProvider.ForceResendingToken,
-        ) {
-            firebaseViewModel.updateOTP(verificationId)
-            firebaseViewModel.updateResendToken(token)
-        }
-    }
-
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-        when (firebaseViewModel.getSignInState()) {
-            SignInState.Google -> {
-                firebaseAuth.currentUser!!.updatePhoneNumber(credential).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        firebaseRealtimeDatabaseUserReference.child(firebaseAuth.currentUser!!.uid)
-                            .setValue(
-                                User(
-                                    photo = firebaseAuth.currentUser!!.photoUrl.toString(),
-                                    displayName = firebaseAuth.currentUser!!.displayName,
-                                    email = firebaseAuth.currentUser!!.email,
-                                    phoneNumber = firebaseAuth.currentUser!!.phoneNumber
-                                )
-                            )
-                        findNavController().navigate(R.id.register_fragment, bundleOf("credentials" to credential))
-                    } else {
-                        showToast(requireContext(), it.exception!!.message.toString())
-                    }
-                }
-            }
-
-            SignInState.PhoneNumber -> {
-                firebaseAuth.signInWithCredential(credential)
-                    .addOnCompleteListener(requireActivity()) { task ->
-                        if (task.isSuccessful) {
-                            if (firebaseAuth.currentUser!!.email != null) {
-                                firebaseViewModel.updateSignUpState(SignUpState.SignedUp)
-                                findNavController().navigate(R.id.main_fragment)
-                            } else {
-                                firebaseAuth.currentUser!!.linkWithCredential(credential)
-                                firebaseViewModel.updateSignUpState(SignUpState.UnsignedUp)
-                                findNavController().navigate(R.id.register_fragment, bundleOf("credentials" to credential))
-                            }
-                        } else {
-                            setEmptyEditTexts()
-                            typedOTP = "      "
-                            showToast(
-                                requireContext(),
-                                getString(R.string.wrong_otp_message)
-                            )
-                        }
-                        binding.progressBar.visibility = View.INVISIBLE
-                    }
-            }
-
-            SignInState.UnsignedIn -> {
-            }
-
-        }
-    }
-
     private fun onUserTryToVerify() {
         if (typedOTP.length == 6 && !typedOTP.contains(" ")) {
             with(binding) {
                 val credential: PhoneAuthCredential =
                     PhoneAuthProvider.getCredential(fragmentOTP, typedOTP)
                 progressBar.visibility = View.VISIBLE
-                signInWithPhoneAuthCredential(credential)
+                firebaseViewModel.signInWithPhoneAuthCredential(credential)
             }
         }
     }
@@ -254,10 +185,6 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
         } else if (symbols.isEmpty()) {
             chars[index - 1] = ' '
         }
-//        if (symbols.length == 2) {
-//            chars[index - 1] = symbols[0]
-//            chars[index] = symbols[1]
-//        }
         typedOTP = String(chars)
         return typedOTP
     }

@@ -2,27 +2,17 @@ package com.example.serviceapp.data.common.di
 
 import android.content.Context
 import com.example.serviceapp.R
-import com.example.serviceapp.data.firebase.FirebaseRepositoryImpl
-import com.example.serviceapp.domain.firebase.FirebaseRepository
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.annotation.Nullable
 import javax.inject.Singleton
 
 @Module(includes = [CommonModule::class])
@@ -34,25 +24,8 @@ class FirebaseModule {
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
     @Singleton
-    @Nullable
-    @Provides
-    fun provideFirebaseCurrentUser(): FirebaseUser? = FirebaseAuth.getInstance().currentUser
-
-    @Singleton
-    @Provides
-    fun provideFirebaseRealtimeDatabase(): FirebaseDatabase = FirebaseDatabase.getInstance("https://service-app-e0bb2-default-rtdb.firebaseio.com")
-
-    @Singleton
     @Provides
     fun provideFirebaseRealtimeDatabaseUserRef(): DatabaseReference = FirebaseDatabase.getInstance("https://service-app-e0bb2-default-rtdb.firebaseio.com").reference.child("users")
-
-    @Singleton
-    @Provides
-    fun provideFirebaseStorage(): StorageReference = FirebaseStorage.getInstance().reference.child("avatars")
-
-    @Singleton
-    @Provides
-    fun provideFirebaseRepository(): FirebaseRepository = FirebaseRepositoryImpl()
 
     @Singleton
     @Provides

@@ -18,31 +18,35 @@
         android:textStyle="bold" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/firstAccessLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/textAccessEmail"
-            android:maxLength="40"
-            android:background="@drawable/normal_borders_text"
+        <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/email" />
+            android:hint="@string/email"
+            android:maxLength="40"
+            android:textSize="16sp"
+            app:errorEnabled="true" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/secondAccessLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         app:passwordToggleEnabled="true">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/textAccessPassword"
+        <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/normal_borders_text"
-            android:hint="@string/password" />
+            android:hint="@string/password"
+            android:textSize="16sp"
+            app:errorEnabled="true" />
 
     </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.example.serviceapp.ui.view_models.database_view_models
+package com.example.serviceapp.domain.view_models.database_view_models
 
 import android.content.Context
 import android.graphics.Bitmap
