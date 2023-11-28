@@ -14,14 +14,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.serviceapp.R
+import com.example.serviceapp.data.common.utils.createWarningAlertDialog
 import com.example.serviceapp.data.common.utils.showToast
-import com.example.serviceapp.data.models.DownloadDialogState
 import com.example.serviceapp.databinding.LoginFragmentBinding
 import com.example.serviceapp.domain.view_models.firebase_view_models.FirebaseViewModel
-import com.example.serviceapp.utils.DownloadDialog
 import com.example.serviceapp.data.models.SignInState
 import com.example.serviceapp.domain.view_models.MainViewModel
-import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -51,7 +49,9 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
         activityResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartIntentSenderForResult()
         ) {
-            firebaseViewModel.observeSignUpState(requireActivity(), it)
+            if (it.resultCode == Activity.RESULT_OK) {
+                firebaseViewModel.googleSignUpActivityResult(it)
+            }
         }
     }
 
@@ -62,12 +62,18 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
                 }.launchIn(viewLifecycleOwner.lifecycleScope)
             navigateFragmentValue.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
                 findNavController().navigate(
-                    it.first, it.second
+                    it
                 )
             }.launchIn(viewLifecycleOwner.lifecycleScope)
             downloadDialogState.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
                 checkDownloadDialogState(requireActivity(), it)
                 }.launchIn(viewLifecycleOwner.lifecycleScope)
+            warningDialogMessage.flowWithLifecycle(
+                viewLifecycleOwner.lifecycle,
+                Lifecycle.State.STARTED
+            ).onEach {
+                createWarningAlertDialog(requireContext(), it)
+            }
         }
     }
 
@@ -80,7 +86,10 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
                 }
                 phoneNumberButton.setOnClickListener {
                     updateSignInState(SignInState.PhoneNumber)
-                    phoneNumberPressNavigation(R.id.phone_number_fragment)
+                    mainViewModel.navigate(R.id.phone_number_fragment)
+                }
+                registerButton.setOnClickListener {
+                    mainViewModel.navigate(R.id.register_fragment)
                 }
             }
         }

@@ -9,8 +9,6 @@ import com.example.serviceapp.domain.databases.order_database.BookingRepository
 import com.example.serviceapp.domain.databases.order_database.BookingRepositoryImpl
 import com.example.serviceapp.domain.databases.service_database.ServiceRepository
 import com.example.serviceapp.domain.databases.service_database.ServiceRepositoryImpl
-import com.example.serviceapp.domain.databases.user_database.UserRepository
-import com.example.serviceapp.domain.databases.user_database.UserRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,10 +33,6 @@ class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideUserDao(database: AppDatabase): UserDao = database.userDao()
-
-    @Provides
-    @Singleton
     fun provideBookingDao(database: AppDatabase): BookingDao = database.bookingDao()
 
     @Provides
@@ -48,10 +42,6 @@ class DatabaseModule {
     @Provides
     @Singleton
     fun provideMasterDaoRepository(masterDao: MasterDao): MasterRepository = MasterRepositoryImpl(masterDao)
-
-    @Provides
-    @Singleton
-    fun provideUserDaoRepository(userDao: UserDao): UserRepository = UserRepositoryImpl(userDao)
 
     @Provides
     @Singleton

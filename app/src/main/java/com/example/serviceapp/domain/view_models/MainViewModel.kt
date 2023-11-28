@@ -13,6 +13,7 @@ import com.example.serviceapp.data.models.DownloadDialogState
 import com.example.serviceapp.domain.settings.usecase.GetAppLanguageUseCase
 import com.example.serviceapp.data.models.ValidationState
 import com.example.serviceapp.utils.DownloadDialog
+import com.example.serviceapp.utils.isInRange
 import com.example.serviceapp.utils.mappers.AppLanguageMapper
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,8 +40,11 @@ class MainViewModel @Inject constructor(
     private val _popupValue = MutableSharedFlow<String>()
     val popupValue: SharedFlow<String> get() = _popupValue
 
-    private val _navigateFragmentValue = MutableSharedFlow<Pair<Int, Bundle>>()
-    val navigateFragmentValue: SharedFlow<Pair<Int, Bundle>> get() = _navigateFragmentValue
+    private val _warningDialogMessage = MutableSharedFlow<String>()
+    val warningDialogMessage: SharedFlow<String> get() = _warningDialogMessage
+
+    private val _navigateFragmentValue = MutableSharedFlow<Int>()
+    val navigateFragmentValue: SharedFlow<Int> get() = _navigateFragmentValue
 
     fun getAppLanguage() {
         viewModelScope.launch {
@@ -50,33 +54,21 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun validateFields(validationList: List<TextInputLayout>): List<ValidationState> {
-        val list = mutableListOf<ValidationState>()
-        return if (validationList.isEmpty()) list
-        else {
-            validationList.forEach {
-                list.add(validateSource(it.editText!!))
-            }
-            list
-        }
-    }
-
-    private fun validateSource(src: EditText): ValidationState {
-        if (src.text.toString().isNotBlank()) {
-            return ValidationState.Success(src.text.toString())
-        }
-        return ValidationState.Error(R.string.enter_value_message)
-    }
-
-    fun navigate(fragment: Int, bundle: Bundle = bundleOf()) {
+    fun navigate(fragment: Int) {
         viewModelScope.launch {
-            _navigateFragmentValue.emit(Pair(fragment, bundle))
+            _navigateFragmentValue.emit(fragment)
         }
     }
 
     fun popupMessage(message: String) {
         viewModelScope.launch {
             _popupValue.emit(message)
+        }
+    }
+
+    fun warningDialog(message: String){
+        viewModelScope.launch {
+            _warningDialogMessage.emit(message)
         }
     }
 
@@ -93,4 +85,6 @@ class MainViewModel @Inject constructor(
             DownloadDialogState.Inactive -> {}
         }
     }
+
+
 }

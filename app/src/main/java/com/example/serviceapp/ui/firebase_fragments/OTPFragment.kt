@@ -1,6 +1,6 @@
 package com.example.serviceapp.ui.firebase_fragments
 
-import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -8,42 +8,29 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.core.content.ContentProviderCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.serviceapp.R
-import com.example.serviceapp.data.common.database.entities.User
+import com.example.serviceapp.data.common.utils.createWarningAlertDialog
 import com.example.serviceapp.data.common.utils.showToast
 import com.example.serviceapp.data.models.DownloadDialogState
 import com.example.serviceapp.databinding.OtpFragmentBinding
-import com.example.serviceapp.domain.view_models.database_view_models.UserDatabaseViewModel
 import com.example.serviceapp.domain.view_models.firebase_view_models.FirebaseViewModel
-import com.example.serviceapp.data.models.SignInState
-import com.example.serviceapp.data.models.SignUpState
 import com.example.serviceapp.domain.view_models.MainViewModel
-import com.example.serviceapp.utils.DownloadDialog
-import com.google.android.play.integrity.internal.m
-import com.google.firebase.FirebaseException
-import com.google.firebase.FirebaseTooManyRequestsException
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthOptions
+import com.example.serviceapp.utils.Constants
+import com.example.serviceapp.utils.TimerState
+import com.example.serviceapp.utils.hideKeyboard
+import com.example.serviceapp.utils.showKeyboard
 import com.google.firebase.auth.PhoneAuthProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class OTPFragment : Fragment(R.layout.otp_fragment) {
@@ -60,26 +47,23 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
         super.onViewCreated(view, savedInstanceState)
         setObservers()
         setListeners()
-        initFragment()
     }
 
     private fun setListeners() {
-        addTextChangeListener()
+        addTextChangeListeners()
         buttonListeners()
     }
 
     private fun buttonListeners() {
         with(binding) {
             verifyButton.setOnClickListener {
-                if (typedOTP.length == 6 && !typedOTP.contains(" ")) {
-                    onUserTryToVerify()
-                }
+                onUserTryToVerify()
             }
             resendTv.setOnClickListener {
                 firebaseViewModel.verifyPhoneNumber(
                     requireActivity(),
                     fragmentPhoneNumber,
-                    true,
+                    isResend = true,
                     fragmentResendToken!!
                 )
                 resendOTPTvVisibility()
@@ -88,51 +72,65 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
     }
 
     private fun setObservers() {
-        with (mainViewModel){
-            popupValue.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
-                showToast(requireContext(), it)
-            }.launchIn(viewLifecycleOwner.lifecycleScope)
-            navigateFragmentValue.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
+        with(mainViewModel) {
+            popupValue.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .onEach {
+                    showToast(requireContext(), it)
+                }.launchIn(viewLifecycleOwner.lifecycleScope)
+            navigateFragmentValue.flowWithLifecycle(
+                viewLifecycleOwner.lifecycle,
+                Lifecycle.State.STARTED
+            ).onEach {
                 findNavController().navigate(
-                    it.first, it.second
+                    it
                 )
             }.launchIn(viewLifecycleOwner.lifecycleScope)
-            downloadDialogState.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
+            downloadDialogState.flowWithLifecycle(
+                viewLifecycleOwner.lifecycle,
+                Lifecycle.State.STARTED
+            ).onEach {
                 checkDownloadDialogState(requireActivity(), it)
+            }
+            warningDialogMessage.flowWithLifecycle(
+                viewLifecycleOwner.lifecycle,
+                Lifecycle.State.STARTED
+            ).onEach {
+                createWarningAlertDialog(requireContext(), it)
             }
         }
         with(firebaseViewModel) {
-            phoneNumber.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).onEach {
-                    fragmentPhoneNumber = it
-                }.launchIn(lifecycleScope)
-            OTP.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
-                    fragmentOTP = it
-                }.launchIn(viewLifecycleOwner.lifecycleScope)
-            resendToken.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).onEach {
-                    fragmentResendToken = it
-                }.launchIn(lifecycleScope)
+            phoneNumber.observe(viewLifecycleOwner) {
+                fragmentPhoneNumber = it
+            }
+            timerValue.observe(viewLifecycleOwner) {
+                when (it) {
+                    is TimerState.Processing -> {
+                        if (it.leftTime != null)
+                            mainViewModel.warningDialog(getString(R.string.get_otp_later_message) + " ${it.leftTime} " + getString(R.string.seconds))
+                    }
 
-            isWrongOTP.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
+                    is TimerState.Stopped -> {
+                    }
+
+                }
+            }
+            OTP.observe(viewLifecycleOwner) {
+                fragmentOTP = it
+            }
+            resendToken.observe(viewLifecycleOwner) {
+                fragmentResendToken = it
+            }
+            isWrongOTP.observe(viewLifecycleOwner) {
                 if (it) {
                     setEmptyEditTexts()
                     typedOTP = "      "
-                    mainViewModel.popupMessage(getString(R.string.wrong_otp_message))
+                    with(binding) {
+                        progressBar.visibility = View.GONE
+                        otpEditText1.requestFocus()
+                    }
                 }
-            }.launchIn(viewLifecycleOwner.lifecycleScope)
-            progressBarVisibility.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
-                when (it) {
-                    View.INVISIBLE -> binding.progressBar.visibility = View.INVISIBLE
-                    View.VISIBLE -> binding.progressBar.visibility = View.VISIBLE
-                    View.GONE -> binding.progressBar.visibility = View.GONE
-                }
-            }.launchIn(viewLifecycleOwner.lifecycleScope)
+            }
         }
-    }
-
-    private fun initFragment() {
-        updateFields()
-        resendOTPTvVisibility()
-        binding.progressBar.visibility = View.INVISIBLE
     }
 
     private fun resendOTPTvVisibility() {
@@ -145,14 +143,6 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
                 resendTv.visibility = View.VISIBLE
                 resendTv.isEnabled = true
             }, 60000)
-        }
-    }
-
-    private fun updateFields() {
-        with(firebaseViewModel) {
-            updatePhoneNumber(requireArguments().getString("phoneNumber")!!)
-            updateOTP(requireArguments().getString("verificationId")!!)
-            updateResendToken(requireArguments().getParcelable("token")!!)
         }
     }
 
@@ -170,10 +160,10 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
     private fun onUserTryToVerify() {
         if (typedOTP.length == 6 && !typedOTP.contains(" ")) {
             with(binding) {
-                val credential: PhoneAuthCredential =
-                    PhoneAuthProvider.getCredential(fragmentOTP, typedOTP)
                 progressBar.visibility = View.VISIBLE
-                firebaseViewModel.signInWithPhoneAuthCredential(credential)
+                mainViewModel.updateDialogState(DownloadDialogState.Show)
+                val credential = PhoneAuthProvider.getCredential(fragmentOTP, typedOTP)
+                firebaseViewModel.signInWithCredential(credential)
             }
         }
     }
@@ -231,24 +221,31 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
         }
     }
 
-    private fun addTextChangeListener() {
+    private fun addTextChangeListeners() {
         with(binding) {
-            otpEditText1.addTextChangedListener(EditTextWatcher(otpEditText1))
-
-            otpEditText2.addTextChangedListener(EditTextWatcher(otpEditText2))
-            otpEditText2.addOnClickClearButtonListener(otpEditText1)
-
-            otpEditText3.addTextChangedListener(EditTextWatcher(otpEditText3))
-            otpEditText3.addOnClickClearButtonListener(otpEditText2)
-
-            otpEditText4.addTextChangedListener(EditTextWatcher(otpEditText4))
-            otpEditText4.addOnClickClearButtonListener(otpEditText3)
-
-            otpEditText5.addTextChangedListener(EditTextWatcher(otpEditText5))
-            otpEditText5.addOnClickClearButtonListener(otpEditText4)
-
-            otpEditText6.addTextChangedListener(EditTextWatcher(otpEditText6))
-            otpEditText6.addOnClickClearButtonListener(otpEditText5)
+            otpEditText1.requestFocus()
+            otpEditText1.showKeyboard()
+            val listOfEditTexts = listOf(
+                otpEditText1,
+                otpEditText2,
+                otpEditText3,
+                otpEditText4,
+                otpEditText5,
+                otpEditText6
+            )
+            listOfEditTexts.onEachIndexed { index, editText ->
+                editText.addTextChangedListener(EditTextWatcher(editText))
+                if (editText != otpEditText1)
+                    editText.addOnClickClearButtonListener(listOfEditTexts[index - 1])
+                editText.setOnFocusChangeListener { view, b ->
+                    listOfEditTexts.onEach {
+                        it.backgroundTintList =
+                            ColorStateList.valueOf(requireContext().getColor(R.color.space_y))
+                    }
+                    view.backgroundTintList =
+                        ColorStateList.valueOf(requireContext().getColor(R.color.space_x))
+                }
+            }
         }
     }
 
@@ -299,8 +296,5 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
         }
     }
 
-    fun View.hideKeyboard() {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(windowToken, 0)
-    }
+
 }

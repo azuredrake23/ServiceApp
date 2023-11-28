@@ -9,12 +9,13 @@
     <string name="phone_number_check">Phone number check</string>
     <string name="verification">Verification</string>
     <string name="enter_text">Enter the text</string>
+    <string name="username">Username</string>
     <string name="new_username">New username</string>
     <string name="email">Email</string>
     <string name="new_email">New email</string>
     <string name="password">Password</string>
     <string name="new_password">New password</string>
-    <string name="password_update">Password update</string>
+    <string name="password_update">Update password</string>
     <string name="confirm_password">Confirm password</string>
     <string name="registration">Registration</string>
     <string name="phone_number">Phone Number</string>
@@ -24,6 +25,7 @@
     <string name="exit_text">Exit</string>
     <string name="delete_account_text">Delete account</string>
     <string name="sign_in_with_social_networks">Sign in with social networks</string>
+    <string name="registration_sign_up">Don\'t have an account? Create it</string>
     <string name="google" translatable="false">Google</string>
     <string name="or">Or</string>
     <string name="also">Also</string>
@@ -47,25 +49,26 @@
     <string name="save">Save</string>
     <string name="confirm_data">Confirm data</string>
     <string name="cancel">Cancel</string>
-    <string name="changing_of_username">Changing of username</string>
+    <string name="change_phone_number">Change phone number</string>
+    <string name="change_username">Change username</string>
     <string name="change_email">Change email</string>
     <string name="change_password">Change password</string>
     <string name="announcement">Announcements</string>
+    <string name="seconds">seconds</string>
 
     Text notification
-    <string name="sign_in_user_not_found_message">Account not found, please try again or sign up</string>
+    <string name="sign_in_user_not_found_message">Account not found, try again or sign up</string>
     <string name="incorrect_pass_message">Incorrect password</string>
-    <string name="sign_in_success_message">You are successfully signed in!</string>
-    <string name="sign_up_success_message">You are successfully signed up!</string>
-    <string name="check_phone_number_message">Please check your country code and phone number</string>
-    <string name="correct_phone_number_message">Please enter correct phone number</string>
-    <string name="enter_number_message">Please enter phone number</string>
-    <string name="enter_email_message">Please enter email</string>
+    <string name="sign_in_success_message">You are successfully signed in</string>
+    <string name="sign_up_success_message">You are successfully signed up</string>
+    <string name="check_phone_number_message">Check your country code and enter your phone number</string>
+    <string name="correct_phone_number_message">Enter correct phone number</string>
+    <string name="enter_number_message">Enter phone number</string>
+    <string name="enter_email_message">Enter email</string>
     <string name="successful_authentication_message">Successful authentication</string>
-    <string name="correct_otp_message">Please enter correct OTP</string>
-    <string name="user_null_message">User info unavailable, please re-authenticate</string>
+    <string name="correct_otp_message">Enter correct OTP</string>
+    <string name="user_null_message">User info unavailable, re-authenticate</string>
     <string name="wrong_otp_message">You have passed wrong otp key, try again</string>
-    <string name="change_username">Change username</string>
     <string name="otp_message">Enter OTP</string>
     <string name="name_message">Enter your name</string>
     <string name="enter_email_and_pass_message">Enter email and pass</string>
@@ -76,8 +79,14 @@
     <string name="email_changed_message">Email successfully changed</string>
     <string name="password_changed_message">Password successfully changed</string>
     <string name="password_mismatch_message">Password mismatch</string>
-    <string name="image_loading_error_message">Image loading error!</string>
-    <string name="empty_field_error_message">Empty field!</string>
+    <string name="image_loading_error_message">Image loading error</string>
+    <string name="empty_field_error_message">Empty field</string>
+    <string name="database_error_message">Database request failed. Repeat later</string>
+    <string name="long_username_message">Username is too long</string>
+    <string name="wrong_password_length_message">The password must contain from 6 to 15 characters</string>
+    <string name="incorrect_email_message">Enter correct email (e.g. username@gmail.com)</string>
+    <string name="phone_registered_message">This phone number is already registered, please enter another one</string>
+    <string name="get_otp_later_message">Impossible to get OTP. Try again in</string>
 
     Key
     <string name="your_web_client_id" translatable="false">607161883-tc5te2ivsfi906l4ush7t4rfhfqsj4vv.apps.googleusercontent.com</string>

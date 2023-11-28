@@ -2,52 +2,8 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f402f84e0b10f353c044d6c9658b412b",
+    "identityHash": "b8529452f3b77c436b74143eab72f779",
     "entities": [
-      {
-        "tableName": "user",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `photo` TEXT, `displayName` TEXT, `email` TEXT, `phoneNumber` TEXT)",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "photo",
-            "columnName": "photo",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "displayName",
-            "columnName": "displayName",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "email",
-            "columnName": "email",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "phoneNumber",
-            "columnName": "phoneNumber",
-            "affinity": "TEXT",
-            "notNull": false
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": true,
-          "columnNames": [
-            "id"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
       {
         "tableName": "booking",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `time` TEXT NOT NULL, `id_user` INTEGER NOT NULL, `id_service_master` INTEGER NOT NULL, `master_name` TEXT NOT NULL)",
@@ -196,7 +152,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f402f84e0b10f353c044d6c9658b412b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b8529452f3b77c436b74143eab72f779')"
     ]
   }
 }

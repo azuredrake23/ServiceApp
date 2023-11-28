@@ -18,6 +18,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.serviceapp.R
 import com.example.serviceapp.data.common.utils.ResourceManager
+import com.example.serviceapp.domain.view_models.firebase_view_models.FirebaseViewModel
 import com.example.serviceapp.ui.dialogs.Dialog
 import com.example.serviceapp.utils.DialogType
 import com.google.android.material.textfield.TextInputLayout
@@ -28,7 +29,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
-    private val mainViewModel: MainViewModel,
+    private val firebaseViewModel: FirebaseViewModel,
     private val resourceManager: ResourceManager,
 ) : ViewModel() {
 
@@ -47,7 +48,6 @@ class AccountViewModel @Inject constructor(
         prevUserAvatarFile = File(userAvatarDir, "prevUserAvatar.jpg")
         if (userAvatarFile.exists())
             userAvatarFile.copyTo(prevUserAvatarFile, true)
-//        prevUserAvatarFile.renameTo(File(userAvatarFile.absolutePath))
     }
 
     fun setupUserAvatarDir(context: Context) {
@@ -59,20 +59,6 @@ class AccountViewModel @Inject constructor(
         } else {
             userAvatarDir.mkdirs()
         }
-//
-//        userAvatarDir = File(context.filesDir, "userAvatar")
-//        currentUserAvatarDir = File(context.filesDir, "prevUserAvatar")
-//        if (userAvatarDir.exists() && userAvatarDir.listFiles()?.isNotEmpty() == true) {
-//
-//
-//            //fkepfkpek
-//
-//
-//            prevUserAvatarFile = userAvatarDir.listFiles()?.get(0)!!
-//            downloadUserAvatar(context, prevUserAvatarFile.toUri())
-//        } else {
-//            userAvatarDir.mkdirs()
-//        }
     }
 
     fun downloadUserAvatar(context: Context, uri: Uri) {
@@ -130,35 +116,12 @@ class AccountViewModel @Inject constructor(
         val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
 //        builder.setTitle(getString(R.string.confirm_data))
         positiveButton.setOnClickListener {
-            when (dialogType) {
-                DialogType.USERNAME -> setDialogPositiveButtonListener(
-                    dialogView,
-                    dialog,
-                    dialogType,
-                    customDialog
-                )
-
-                DialogType.EMAIL -> setDialogPositiveButtonListener(
-                    dialogView,
-                    dialog,
-                    dialogType,
-                    customDialog
-                )
-
-                DialogType.PASSWORD -> setDialogPositiveButtonListener(
-                    dialogView,
-                    dialog,
-                    dialogType,
-                    customDialog
-                )
-
-                DialogType.DELETE -> setDialogPositiveButtonListener(
-                    dialogView,
-                    dialog,
-                    dialogType,
-                    customDialog
-                )
-            }
+            setDialogPositiveButtonListener(
+                dialogView,
+                dialogType,
+                dialog,
+                customDialog
+            )
         }
         negativeButton.setOnClickListener {
             dialog.cancel()
@@ -167,55 +130,67 @@ class AccountViewModel @Inject constructor(
 
     private fun setDialogPositiveButtonListener(
         view: View,
-        dialog: AlertDialog,
         dialogType: DialogType,
+        dialog: AlertDialog,
         customDialog: Dialog
     ) {
         when (dialogType) {
             DialogType.USERNAME -> {
-                val firstUsernameLayout =
-                    view.findViewById<TextInputLayout>(R.id.firstUsernameLayout)
-                val secondUsernameLayout =
-                    view.findViewById<TextInputLayout>(R.id.secondUsernameLayout)
-                val layoutList = listOf(firstUsernameLayout, secondUsernameLayout)
-                val validationList = mainViewModel.validateFields(layoutList)
-                customDialog.setPositiveClickListener(
-                    dialog, layoutList, validationList
+                setDialog(
+                    view.findViewById(R.id.firstUsernameLayout),
+                    view.findViewById(R.id.secondUsernameLayout),
+                    dialog,
+                    customDialog,
+                    dialogType
                 )
             }
 
             DialogType.EMAIL -> {
-                val firstEmailLayout = view.findViewById<TextInputLayout>(R.id.firstEmailLayout)
-                val secondEmailLayout = view.findViewById<TextInputLayout>(R.id.secondEmailLayout)
-                val layoutList = listOf(firstEmailLayout, secondEmailLayout)
-                val validationList = mainViewModel.validateFields(layoutList)
-                customDialog.setPositiveClickListener(
-                    dialog, layoutList, validationList
+                setDialog(
+                    view.findViewById(R.id.firstEmailLayout),
+                    view.findViewById(R.id.secondEmailLayout),
+                    dialog,
+                    customDialog,
+                    dialogType
                 )
             }
 
             DialogType.PASSWORD -> {
-                val firstUpdatePassLayout =
-                    view.findViewById<TextInputLayout>(R.id.firstUpdatePassLayout)
-                val secondUpdatePassLayout =
-                    view.findViewById<TextInputLayout>(R.id.secondUpdatePassLayout)
-                val layoutList = listOf(firstUpdatePassLayout, secondUpdatePassLayout)
-                val validationList = mainViewModel.validateFields(layoutList)
-                customDialog.setPositiveClickListener(
-                    dialog, layoutList, validationList
+                setDialog(
+                    view.findViewById(R.id.firstUpdatePassLayout),
+                    view.findViewById(R.id.secondUpdatePassLayout),
+                    dialog,
+                    customDialog,
+                    dialogType
                 )
             }
 
             DialogType.DELETE -> {
-                val firstUpdateDeleteLayout =
-                    view.findViewById<TextInputLayout>(R.id.firstDeleteLayout)
-                val layoutList = listOf(firstUpdateDeleteLayout)
-                val validationList = mainViewModel.validateFields(layoutList)
-                customDialog.setPositiveClickListener(
-                    dialog, layoutList, validationList
+                setDialog(
+                    view.findViewById(R.id.firstDeleteLayout),
+                    null,
+                    dialog,
+                    customDialog,
+                    dialogType
                 )
             }
         }
+    }
+
+    private fun setDialog(
+        view1: TextInputLayout,
+        view2: TextInputLayout?,
+        dialog: AlertDialog,
+        customDialog: Dialog,
+        dialogType: DialogType
+    ) {
+        val layoutList: List<TextInputLayout> = if (view2 != null) {
+            listOf(view1, view2)
+        } else listOf(view1)
+        val validationList = firebaseViewModel.validateFields(dialogType, layoutList)
+        customDialog.setPositiveClickListener(
+            dialog, dialogType, layoutList, validationList
+        )
     }
 
 }

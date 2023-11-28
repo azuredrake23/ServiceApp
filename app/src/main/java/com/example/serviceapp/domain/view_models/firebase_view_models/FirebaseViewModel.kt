@@ -1,29 +1,36 @@
 package com.example.serviceapp.domain.view_models.firebase_view_models
 
 import android.app.Activity
-import android.os.Bundle
+import android.content.Context
+import android.os.CountDownTimer
 import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
-import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.serviceapp.R
-import com.example.serviceapp.data.common.database.entities.User
 import com.example.serviceapp.data.common.utils.ResourceManager
+import com.example.serviceapp.data.common.utils.showToast
 import com.example.serviceapp.data.models.DownloadDialogState
 import com.example.serviceapp.data.models.SignInState
 import com.example.serviceapp.data.models.SignUpState
+import com.example.serviceapp.data.models.User
+import com.example.serviceapp.data.models.ValidationState
+import com.example.serviceapp.databinding.RegisterFragmentBinding
 import com.example.serviceapp.domain.view_models.MainViewModel
+import com.example.serviceapp.utils.Constants
+import com.example.serviceapp.utils.DialogType
+import com.example.serviceapp.utils.TimerState
+import com.example.serviceapp.utils.isInRange
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.auth.api.identity.SignInCredential
-import com.google.android.gms.tasks.Task
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.PhoneAuthCredential
@@ -36,14 +43,15 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Timer
+import java.util.TimerTask
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+
 
 @HiltViewModel
 class FirebaseViewModel @Inject constructor(
@@ -55,14 +63,32 @@ class FirebaseViewModel @Inject constructor(
     private val signInRequest: BeginSignInRequest
 ) : ViewModel() {
 
-    private val _phoneNumber = MutableSharedFlow<String>()
-    val phoneNumber: SharedFlow<String> get() = _phoneNumber
+    private val _googleCredentials = MutableLiveData<AuthCredential>()
+    val googleCredentials: LiveData<AuthCredential> get() = _googleCredentials
 
-    private val _OTP = MutableSharedFlow<String>(replay = 1)
-    val OTP: SharedFlow<String> get() = _OTP
+    private val _phoneCredentials = MutableLiveData<PhoneAuthCredential>()
+    val phoneCredentials: LiveData<PhoneAuthCredential> get() = _phoneCredentials
 
-    private val _resendToken = MutableSharedFlow<ForceResendingToken>()
-    val resendToken: SharedFlow<ForceResendingToken> get() = _resendToken
+    private val _phoneNumber = MutableLiveData<String>()
+    val phoneNumber: LiveData<String> get() = _phoneNumber
+
+    private val _timerValue = MutableLiveData<TimerState>(TimerState.Stopped)
+    val timerValue: LiveData<TimerState> get() = _timerValue
+
+    private val _OTP = MutableLiveData<String>()
+    val OTP: LiveData<String> get() = _OTP
+
+    private val _resendToken = MutableLiveData<ForceResendingToken>()
+    val resendToken: LiveData<ForceResendingToken> get() = _resendToken
+
+    private val _isWrongOTP = MutableLiveData(false)
+    val isWrongOTP: LiveData<Boolean> get() = _isWrongOTP
+
+//    private val _OTP = MutableSharedFlow<String>(replay = 1)
+//    val OTP: SharedFlow<String> get() = _OTP
+//
+//    private val _resendToken = MutableSharedFlow<ForceResendingToken>()
+//    val resendToken: SharedFlow<ForceResendingToken> get() = _resendToken
 
     private val _signInState = MutableStateFlow<SignInState>(SignInState.UnsignedIn)
     val signInState: StateFlow<SignInState> get() = _signInState
@@ -70,47 +96,12 @@ class FirebaseViewModel @Inject constructor(
     private val _signUpState = MutableStateFlow<SignUpState>(SignUpState.UnsignedUp)
     val signUpState: StateFlow<SignUpState> get() = _signUpState
 
-    private val _isWrongOTP = MutableStateFlow(false)
-    val isWrongOTP: StateFlow<Boolean> get() = _isWrongOTP
-
-    private val _progressBarVisibility = MutableStateFlow(View.VISIBLE)
-    val progressBarVisibility: StateFlow<Int> get() = _progressBarVisibility
-
-    private val callbackPhoneNumber =
-        object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
-
-            override fun onVerificationFailed(e: FirebaseException) {
-                viewModelScope.launch {
-                    mainViewModel.popupMessage(e.message.toString())
-                }
-            }
-
-            override fun onCodeSent(
-                verificationId: String,
-                token: ForceResendingToken
-            ) {
-                mainViewModel.updateDialogState(DownloadDialogState.Dismiss)
-//                downloadDialog.cancelDownloadDialog()
-                viewModelScope.launch {
-                    mainViewModel.navigate(
-                        fragment = R.id.otp_fragment, bundle = bundleOf(
-                            "verificationId" to verificationId,
-                            "token" to token,
-                            "phoneNumber" to phoneNumber
-                        )
-                    )
-                }
-            }
-        }
-
-    private val callbackOTP = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+    private val callback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-            signInWithPhoneAuthCredential(credential)
         }
 
         override fun onVerificationFailed(e: FirebaseException) {
-            mainViewModel.popupMessage(e.message.toString())
+            mainViewModel.warningDialog(e.message.toString())
         }
 
         override fun onCodeSent(
@@ -119,102 +110,54 @@ class FirebaseViewModel @Inject constructor(
         ) {
             updateOTP(verificationId)
             updateResendToken(token)
+            with(mainViewModel) {
+                updateDialogState(DownloadDialogState.Dismiss)
+                navigate(R.id.otp_fragment)
+            }
         }
     }
 
-    fun observeSignUpState(activity: Activity, activityResult: ActivityResult) {
+    /********** LOGIN FRAGMENT METHODS **********/
+
+    fun googleSignUpActivityResult(activityResult: ActivityResult) {
         viewModelScope.launch {
-            if (activityResult.resultCode == Activity.RESULT_OK) {
-                try {
-                    val googleCredential =
-                        oneTapClient.getSignInCredentialFromIntent(activityResult.data)
-                    mainViewModel.updateDialogState(DownloadDialogState.Show)
-//                    downloadDialog.showDownloadDialog()
-                    val firebaseCredential =
-                        GoogleAuthProvider.getCredential(googleCredential.googleIdToken, null)
-                    firebaseAuth.signInWithCredential(firebaseCredential)
-                        .addOnCompleteListener(activity) { task ->
-                            googleSignInExecution(task, firebaseCredential, googleCredential)
-                        }
-                } catch (ex: Exception) {
-                    mainViewModel.popupMessage(ex.toString())
+            val googleCredential =
+                oneTapClient.getSignInCredentialFromIntent(activityResult.data)
+            mainViewModel.updateDialogState(DownloadDialogState.Show)
+            val firebaseCredential =
+                GoogleAuthProvider.getCredential(googleCredential.googleIdToken, null)
+            updateGoogleCredentials(firebaseCredential)
+            firebaseAuth.signInWithCredential(firebaseCredential).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    googleUserUidCheck()
+                } else {
+                    mainViewModel.warningDialog(it.exception!!.message.toString())
                 }
             }
         }
     }
 
-    private fun googleSignInExecution(
-        task: Task<AuthResult>,
-        firebaseCredential: AuthCredential,
-        googleCredential: SignInCredential
-    ) {
+    private fun googleUserUidCheck() {
         viewModelScope.launch {
-            if (task.isSuccessful) {
-                firebaseAuth.currentUser!!.reauthenticate(firebaseCredential)
-                    .addOnCompleteListener {
-                        firebaseAuth.currentUser!!.updateEmail(googleCredential.id)
-                        firebaseAuth.currentUser!!.updateProfile(userProfileChangeRequest {
-                            displayName = googleCredential.displayName
-                        })
-                    }
-                googleButtonPressNavigation(task, firebaseCredential, googleCredential)
-            } else {
-                mainViewModel.popupMessage(task.exception.toString())
-            }
-        }
-    }
-
-    private fun googleButtonPressNavigation(
-        task: Task<AuthResult>,
-        firebaseCredential: AuthCredential,
-        googleCredential: SignInCredential
-    ) {
-        firebaseRealtimeDatabaseUserReference.child(firebaseAuth.currentUser!!.uid)
-            .child("phoneNumber").addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    viewModelScope.launch {
-                        mainViewModel.updateDialogState(DownloadDialogState.Dismiss)
-//                        downloadDialog.cancelDownloadDialog()
-                        if (dataSnapshot.value != null) {
-                            /** USER HAS PHONE NUMBER **/
-                            _signUpState.value = SignUpState.SignedUp
-                            mainViewModel.navigate(fragment = R.id.main_fragment)
-                            mainViewModel.popupMessage(resourceManager.getString(R.string.successful_authentication_message))
-                        } else {
-                            /** USER DOESN'T HAS PHONE NUMBER **/
-                            _signUpState.value = SignUpState.UnsignedUp
-                            firebaseAuth.currentUser!!.linkWithCredential(
-                                firebaseCredential
-                            ).addOnCompleteListener {
-                                if (task.isSuccessful) {
-                                    viewModelScope.launch {
-                                        firebaseAuth.currentUser!!.updateProfile(
-                                            userProfileChangeRequest {
-                                                displayName = googleCredential.displayName
-                                                if (googleCredential.profilePictureUri != null) {
-                                                    photoUri = googleCredential.profilePictureUri
-                                                }
-                                            })
-                                        firebaseAuth.currentUser!!.updateEmail(
-                                            googleCredential.id
-                                        )
-                                        mainViewModel.navigate(fragment = R.id.phone_number_fragment)
-                                    }
-                                }
+            with(mainViewModel) {
+                firebaseRealtimeDatabaseUserReference.child(firebaseAuth.currentUser!!.uid)
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            updateDialogState(DownloadDialogState.Dismiss)
+                            if (dataSnapshot.exists()) {
+                                _signUpState.value = SignUpState.SignedUp
+                                navigate(R.id.main_fragment)
+                            } else {
+                                _signUpState.value = SignUpState.UnsignedUp
+                                navigate(R.id.phone_number_fragment)
                             }
                         }
-                    }
-                }
 
-                override fun onCancelled(databaseError: DatabaseError) {
-
-                }
-            })
-    }
-
-    fun phoneNumberPressNavigation(navigationFragment: Int) {
-        viewModelScope.launch {
-            mainViewModel.navigate(fragment = navigationFragment)
+                        override fun onCancelled(error: DatabaseError) {
+                            warningDialog(resourceManager.getString(R.string.database_error_message))
+                        }
+                    })
+            }
         }
     }
 
@@ -222,21 +165,52 @@ class FirebaseViewModel @Inject constructor(
         activity: Activity,
         activityResultLauncher: ActivityResultLauncher<IntentSenderRequest>
     ) {
-//        downloadDialog.showDownloadDialog()
         mainViewModel.updateDialogState(DownloadDialogState.Show)
         oneTapClient.beginSignIn(signInRequest)
             .addOnSuccessListener(activity) { result ->
                 val intentSenderRequest =
                     IntentSenderRequest.Builder(result.pendingIntent.intentSender).build()
                 activityResultLauncher.launch(intentSenderRequest)
-//                downloadDialog.cancelDownloadDialog()
                 mainViewModel.updateDialogState(DownloadDialogState.Dismiss)
             }.addOnFailureListener(activity) { e ->
-                viewModelScope.launch {
-                    mainViewModel.popupMessage(e.message!!)
-                }
+                mainViewModel.warningDialog(e.message!!)
             }
     }
+
+    fun isUserExists(
+        activity: FragmentActivity,
+        phoneNumber: String,
+        isResend: Boolean,
+        token: ForceResendingToken?
+    ) {
+//        viewModelScope.launch {
+//            firebaseRealtimeDatabaseUserReference.orderByChild("phoneNumber")
+//                .equalTo(phoneNumber)
+//                .addListenerForSingleValueEvent(object : ValueEventListener {
+//                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                        if (dataSnapshot.exists()) {
+//                                for (data in dataSnapshot.children) {
+//                                    val phone = data.child("phoneNumber").value.toString()
+//                                    if (phone == phoneNumber) {
+//                                        mainViewModel.popupMessage(resourceManager.getString(R.string.phone_registered_message))
+//                                    } else {
+//                                        verifyPhoneNumber(activity, phoneNumber, isResend, token)
+//                                    }
+//                                }
+//                            mainViewModel.popupMessage(resourceManager.getString(R.string.phone_registered_message))
+//                        } else {
+//                            verifyPhoneNumber(activity, phoneNumber, isResend, token)
+//                        }
+//                    }
+//
+//                    override fun onCancelled(databaseError: DatabaseError) {}
+//                })
+//        }
+
+    }
+
+    /********** PHONE NUMBER FRAGMENT METHODS **********/
+    var leftTime = 0
 
     fun verifyPhoneNumber(
         activity: Activity,
@@ -244,102 +218,212 @@ class FirebaseViewModel @Inject constructor(
         isResend: Boolean,
         token: ForceResendingToken?
     ) {
+        if (_timerValue.value is TimerState.Processing) {
+            updateTimerValue(TimerState.Processing(leftTime))
+            return
+        }
+        val timer = object: CountDownTimer(30000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                leftTime = (millisUntilFinished/1000).toInt()
+            }
+
+            override fun onFinish() {
+                updateTimerValue(TimerState.Stopped)
+                leftTime = 0
+            }
+        }
+        timer.start()
+        updateTimerValue(TimerState.Processing())
+        updatePhoneNumber(phoneNumber)
         if (!isResend) {
             mainViewModel.updateDialogState(DownloadDialogState.Show)
-//            downloadDialog.showDownloadDialog()
         }
         val options = PhoneAuthOptions.newBuilder(firebaseAuth)
             .setPhoneNumber(phoneNumber) // Phone number to verify
-            .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+            .setTimeout(30L, TimeUnit.SECONDS) // Timeout and unit
             .setActivity(activity) // Activity (for callback binding)
-            .setCallbacks(if (isResend) callbackOTP else callbackPhoneNumber)
+            .setCallbacks(callback)
             .also { if (isResend) it.setForceResendingToken(token!!) }// OnVerificationStateChangedCallbacks
             .build()
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
-    fun signInWithPhoneAuthCredential(
+    /********** OTP FRAGMENT METHODS **********/
+
+    fun signInWithCredential(
         credential: PhoneAuthCredential
     ) {
-        firebaseAuth.signInWithCredential(credential)
-            .addOnCompleteListener { task ->
-                viewModelScope.launch {
-                    if (task.isSuccessful) {
-                        when (_signInState.value) {
-                            SignInState.Google -> {
-                                googleSignIn(credential)
-                            }
-
-                            SignInState.PhoneNumber -> {
-                                phoneNumberSignIn(credential)
-                            }
-
-                            SignInState.UnsignedIn -> {}
+        updatePhoneCredentials(credential)
+        with(mainViewModel) {
+            updateDialogState(DownloadDialogState.Dismiss)
+            when (signInState.value) {
+                SignInState.Google -> {
+                    firebaseAuth.currentUser!!.updatePhoneNumber(credential).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            updateIsWrongOTP(false)
+                            setNewValueToRealtimeDatabase()
+                            navigate(R.id.main_fragment)
+                        } else {
+                            updateIsWrongOTP(true)
+                            warningDialog(it.exception!!.message.toString())
+                            //разобраться почему не работает warning dialog здесь
                         }
-                        _isWrongOTP.value = false
-                    } else {
-                        _isWrongOTP.value = true
                     }
                 }
+
+                SignInState.PhoneNumber -> {
+                    firebaseRealtimeDatabaseUserReference.child(firebaseAuth.currentUser!!.uid)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    updateSignUpState(SignUpState.SignedUp)
+                                    navigate(R.id.main_fragment)
+                                } else {
+                                    firebaseAuth.currentUser!!.updatePhoneNumber(credential)
+                                        .addOnCompleteListener {
+                                            if (it.isSuccessful) {
+                                                updateIsWrongOTP(false)
+                                                updateSignUpState(SignUpState.UnsignedUp)
+                                                navigate(R.id.register_fragment)
+                                            } else {
+                                                updateIsWrongOTP(true)
+                                                warningDialog(it.exception!!.message.toString())
+                                            }
+                                        }
+                                }
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                warningDialog(resourceManager.getString(R.string.database_error_message))
+                            }
+                        })
+
+
+                }
+
+                SignInState.UnsignedIn -> {}
             }
+
+        }
     }
 
-    private fun googleSignIn(credential: PhoneAuthCredential) {
-        firebaseAuth.currentUser!!.updatePhoneNumber(credential)
-            .addOnCompleteListener {
+    /********** REGISTER FRAGMENT METHODS **********/
+
+    fun initRegisterFragmentView(context: Context, binding: RegisterFragmentBinding) {
+        with(binding) {
+            if (signInState.value == SignInState.Google) {
+                nameInputLayout.visibility = View.GONE
+                emailInputLayout.visibility = View.GONE
+            }
+        }
+
+        continueButtonListener(context, binding) {
+            firebaseAuth.currentUser!!.updateProfile(userProfileChangeRequest {
+                displayName = binding.nameEnter.text.toString()
+            })
+            firebaseAuth.currentUser!!.reauthenticate(
+                phoneCredentials.value!!
+            ).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    firebaseRealtimeDatabaseUserReference.child(
-                        firebaseAuth.currentUser!!.uid
-                    )
-                        .setValue(
-                            User(
-                                photo = firebaseAuth.currentUser!!.photoUrl.toString(),
-                                displayName = firebaseAuth.currentUser!!.displayName,
-                                email = firebaseAuth.currentUser!!.email,
-                                phoneNumber = firebaseAuth.currentUser!!.phoneNumber
-                            )
-                        )
-                    mainViewModel.navigate(
-                        fragment = R.id.register_fragment,
-                        bundle = bundleOf("credentials" to credential)
-                    )
+                    updateSignUpState(SignUpState.SignedUp)
+                    firebaseAuth.currentUser!!.updateEmail(binding.emailEnter.text.toString())
+                    firebaseAuth.currentUser!!.updatePassword(binding.passwordEnter.text.toString())
+                    setNewValueToRealtimeDatabase()
+                    mainViewModel.navigate(R.id.main_fragment)
                 } else {
-                    mainViewModel.popupMessage(it.exception!!.message.toString())
+                    mainViewModel.warningDialog(it.exception!!.message.toString())
                 }
             }
+        }
     }
 
-    private fun phoneNumberSignIn(credential: PhoneAuthCredential) {
-        if (firebaseAuth.currentUser!!.email != null) {
-            updateSignUpState(SignUpState.SignedUp)
-            mainViewModel.navigate(fragment = R.id.main_fragment)
-        } else {
-            firebaseAuth.currentUser!!.linkWithCredential(credential)
-            updateSignUpState(SignUpState.UnsignedUp)
-            mainViewModel.navigate(
-                fragment = R.id.register_fragment,
-                bundle = bundleOf(
-                    "credentials" to credential
-                )
-            )
+    private fun continueButtonListener(
+        context: Context,
+        binding: RegisterFragmentBinding,
+        realization: () -> Unit
+    ) {
+        with(binding) {
+            continueButton.setOnClickListener {
+                mainViewModel.updateDialogState(DownloadDialogState.Show)
+                var validationList = listOf<ValidationState>()
+                var validationInputList = listOf<TextInputLayout>()
+                when (signInState.value) {
+                    SignInState.Google -> {
+                        validationList = listOf(
+                            validatePassword(passwordEnter.text.toString())
+                        )
+                        validationInputList = listOf(
+                            passwordInputLayout
+                        )
+                    }
+
+                    SignInState.PhoneNumber -> {
+                        validationList = listOf(
+                            validateName(nameEnter.text.toString()),
+                            validateEmail(emailEnter.text.toString()),
+                            validatePassword(passwordEnter.text.toString())
+                        )
+                        validationInputList = listOf(
+                            nameInputLayout,
+                            emailInputLayout,
+                            passwordInputLayout
+                        )
+                    }
+
+                    SignInState.UnsignedIn -> {}
+                }
+
+                if (validationList.all { it is ValidationState.Success }) {
+                    realization.invoke()
+                } else {
+                    setErrors(context, validationInputList, validationList)
+                }
+                mainViewModel.updateDialogState(DownloadDialogState.Dismiss)
+            }
+        }
+    }
+
+    /********** COMMON METHODS **********/
+
+    fun updateGoogleCredentials(credentials: AuthCredential) {
+        viewModelScope.launch {
+            _googleCredentials.value = credentials
+        }
+    }
+
+    fun updatePhoneCredentials(credentials: PhoneAuthCredential) {
+        viewModelScope.launch {
+            _phoneCredentials.value = credentials
         }
     }
 
     fun updatePhoneNumber(phoneNumber: String) {
         viewModelScope.launch {
-            _phoneNumber.emit(phoneNumber)
+            _phoneNumber.value = phoneNumber
+        }
+    }
+
+    fun updateTimerValue(timerValue: TimerState){
+        viewModelScope.launch {
+            _timerValue.value = timerValue
         }
     }
 
     fun updateOTP(otp: String) {
         viewModelScope.launch {
-            _OTP.emit(otp)
+            _OTP.value = otp
+        }
+    }
+
+    fun updateIsWrongOTP(isWrongOTP: Boolean) {
+        viewModelScope.launch {
+            _isWrongOTP.value = isWrongOTP
         }
     }
 
     fun updateResendToken(resendToken: ForceResendingToken) {
         viewModelScope.launch {
-            _resendToken.emit(resendToken)
+            _resendToken.value = resendToken
         }
     }
 
@@ -355,6 +439,85 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
+    fun validateFields(
+        dialogType: DialogType,
+        validationList: List<TextInputLayout>
+    ): List<ValidationState> {
+        val list = mutableListOf<ValidationState>()
+        return if (validationList.isEmpty()) list
+        else {
+            val str1 = validationList[0].editText!!.text.toString()
+            var str2 = ""
+            if (validationList.size != 1) {
+                str2 = validationList[1].editText!!.text.toString()
+            }
+            when (dialogType) {
+                DialogType.USERNAME -> {
+                    list.add(validateName(str1))
+                    list.add(validatePassword(str2))
+                }
+
+                DialogType.EMAIL -> {
+                    list.add(validateEmail(str1))
+                    list.add(validatePassword(str2))
+                }
+
+                DialogType.PASSWORD -> {
+                    list.add(validatePassword(str1))
+                    list.add(validateNewPassword(str1, str2))
+                }
+
+                DialogType.DELETE -> {
+                    list.add(validatePassword(str1))
+                }
+            }
+            list
+        }
+    }
+
+    fun validateName(src: String): ValidationState {
+        if (src.isEmpty()) {
+            return ValidationState.Error(R.string.enter_value_message)
+        }
+        if (!src.length.isInRange(0, 30)) {
+            return ValidationState.Error(R.string.long_username_message)
+        }
+        return ValidationState.Success(src)
+    }
+
+    fun validateEmail(src: String): ValidationState {
+        if (src.isEmpty()) {
+            return ValidationState.Error(R.string.enter_value_message)
+        }
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$".toRegex()
+        if (!src.matches(emailRegex)) {
+            return ValidationState.Error(R.string.incorrect_email_message)
+        }
+        return ValidationState.Success(src)
+        // сделать валидацию для email - regex и общую для всех остальных полей - длина от 6 до 15 символов
+    }
+
+    fun validatePassword(src: String): ValidationState {
+        if (src.isEmpty()) {
+            return ValidationState.Error(R.string.enter_value_message)
+        }
+        if (!src.length.isInRange(6, 15)) {
+            return ValidationState.Error(R.string.wrong_password_length_message)
+        }
+        return ValidationState.Success(src)
+    }
+
+    fun validateNewPassword(password: String, newPassword: String): ValidationState {
+        if (newPassword.isEmpty()) {
+            return ValidationState.Error(R.string.enter_value_message)
+        }
+        if (!password.length.isInRange(6, 15)) {
+            return ValidationState.Error(R.string.wrong_password_length_message)
+        }
+        if (password != newPassword) return ValidationState.Error(R.string.password_mismatch_message)
+        return ValidationState.Success(newPassword)
+    }
+
     fun updateInputFieldErrorState(
         view: TextInputLayout,
         message: String,
@@ -362,6 +525,44 @@ class FirebaseViewModel @Inject constructor(
     ) {
         view.error = message
         view.isErrorEnabled = isErrorEnabled
+    }
+
+    fun setErrors(
+        context: Context,
+        validationInputList: List<TextInputLayout>,
+        validationList: List<ValidationState>
+    ) {
+        validationList.forEachIndexed { index, validationState ->
+            when (validationState) {
+                is ValidationState.Success -> {
+                    updateInputFieldErrorState(
+                        validationInputList[index], "", false
+                    )
+                }
+
+                is ValidationState.Error -> {
+                    updateInputFieldErrorState(
+                        validationInputList[index],
+                        context.getString(validationState.messageStringId),
+                        true
+                    )
+                }
+
+                is ValidationState.Inactive -> {}
+            }
+        }
+    }
+
+    fun setNewValueToRealtimeDatabase() {
+        firebaseRealtimeDatabaseUserReference.child(firebaseAuth.currentUser!!.uid)
+            .setValue(
+                User(
+                    firebaseAuth.currentUser!!.photoUrl.toString(),
+                    firebaseAuth.currentUser!!.displayName,
+                    firebaseAuth.currentUser!!.email,
+                    firebaseAuth.currentUser!!.phoneNumber
+                )
+            )
     }
 
 }

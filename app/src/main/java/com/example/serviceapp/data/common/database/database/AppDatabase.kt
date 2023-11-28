@@ -7,12 +7,12 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.serviceapp.data.common.database.daos.*
 import com.example.serviceapp.data.common.database.entities.*
+import com.example.serviceapp.data.models.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Database(entities = [User::class, Booking::class, Service::class, Master::class], version = 1, exportSchema = true)
+@Database(entities = [Booking::class, Service::class, Master::class], version = 1, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
     abstract fun masterDao(): MasterDao
     abstract fun bookingDao(): BookingDao
     abstract fun serviceDao(): ServiceDao
@@ -31,10 +31,6 @@ abstract class AppDatabase : RoomDatabase() {
 //                    populateMasterDatabase(database.masterDao())
                 }
             }
-        }
-
-        suspend fun populateUserDatabase(userDao: UserDao) {
-            userDao.deleteAll()
         }
 
         suspend fun populateBookingDatabase(bookingDao: BookingDao) {

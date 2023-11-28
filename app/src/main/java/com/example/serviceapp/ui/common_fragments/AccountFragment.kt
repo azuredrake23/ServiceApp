@@ -7,28 +7,34 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.serviceapp.R
 import com.example.serviceapp.databinding.AccountFragmentBinding
-import com.example.serviceapp.ui.dialogs.DeleteDialog
-import com.example.serviceapp.ui.dialogs.EmailDialog
-import com.example.serviceapp.ui.dialogs.NewPassDialog
-import com.example.serviceapp.ui.dialogs.UsernameDialog
 import com.example.serviceapp.domain.view_models.MainViewModel
 import com.example.serviceapp.domain.view_models.firebase_view_models.FirebaseViewModel
 import com.example.serviceapp.utils.DialogType
 import com.example.serviceapp.data.models.SignInState
 import com.example.serviceapp.data.models.SignUpState
 import com.example.serviceapp.domain.view_models.AccountViewModel
+import com.example.serviceapp.ui.dialogs.Dialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 
 @AndroidEntryPoint
@@ -39,19 +45,19 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
     private val accountViewModel: AccountViewModel by activityViewModels()
 
     private val usernameDialog by lazy {
-        UsernameDialog(requireContext(), binding, firebaseViewModel.firebaseAuth)
+        Dialog(requireContext(), binding, mainViewModel, firebaseViewModel)
     }
 
     private val emailDialog by lazy {
-        EmailDialog(requireContext(), binding, firebaseViewModel.firebaseAuth)
+        Dialog(requireContext(), binding, mainViewModel, firebaseViewModel)
     }
 
     private val newPassDialog by lazy {
-        NewPassDialog(requireContext(), binding, firebaseViewModel.firebaseAuth)
+        Dialog(requireContext(), binding, mainViewModel, firebaseViewModel)
     }
 
     private val deleteDialog by lazy {
-        DeleteDialog(requireContext(), binding, firebaseViewModel.firebaseAuth)
+        Dialog(requireContext(), binding, mainViewModel, firebaseViewModel)
     }
 
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
@@ -71,6 +77,9 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
 
     private fun setListeners() {
         with(binding) {
+            changePhoneNumberView.setOnClickListener {
+                mainViewModel.navigate(R.id.phone_number_fragment)
+            }
             changeUsernameView.setOnClickListener {
                 accountViewModel.setupDialog(
                     requireContext(),
@@ -97,7 +106,8 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
             }
             exitButton.setOnClickListener {
                 firebaseViewModel.updateSignInState(SignInState.UnsignedIn)
-                mainViewModel.navigate(fragment = R.id.login_fragment)
+                firebaseViewModel.firebaseAuth.signOut()
+                mainViewModel.navigate(R.id.login_fragment)
             }
             deleteButton.setOnClickListener {
                 firebaseViewModel.updateSignUpState(SignUpState.UnsignedUp)
@@ -126,6 +136,13 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
                 binding.profileImage.setImageBitmap(it)
             }
         }
+        with(mainViewModel) {
+            navigateFragmentValue.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
+                findNavController().navigate(
+                    it
+                )
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }
     }
 
     private fun initFragment() {
@@ -135,7 +152,7 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
             with(firebaseViewModel) {
                 changeUsernameView.text = firebaseAuth.currentUser!!.displayName
                 changeEmailView.text = firebaseAuth.currentUser!!.email
-                phoneNumberView.text = firebaseAuth.currentUser!!.phoneNumber
+                changePhoneNumberView.text = firebaseAuth.currentUser!!.phoneNumber
             }
         }
     }
@@ -158,14 +175,16 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
         }
 
         uCropContract = object : ActivityResultContract<List<Uri>, Uri>() {
-            override fun createIntent(context: Context, input: List<Uri>): Intent = accountViewModel.getUCropIntent(context, input)
+            override fun createIntent(context: Context, input: List<Uri>): Intent =
+                accountViewModel.getUCropIntent(context, input)
 
-            override fun parseResult(resultCode: Int, intent: Intent?): Uri = accountViewModel.getUri(resultCode, intent)
+            override fun parseResult(resultCode: Int, intent: Intent?): Uri =
+                accountViewModel.getUri(resultCode, intent)
         }
 
         cropImage = registerForActivityResult(uCropContract) { uri ->
-            with(accountViewModel){
-                if (prevUserAvatarFile.exists()){
+            with(accountViewModel) {
+                if (prevUserAvatarFile.exists()) {
                     resetFiles()
                 }
                 downloadUserAvatar(requireContext(), uri)
