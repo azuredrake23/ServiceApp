@@ -6,6 +6,7 @@ import android.content.Context
 import androidx.navigation.fragment.NavHostFragment
 import com.example.serviceapp.R
 import com.example.serviceapp.data.common.utils.showToast
+import com.example.serviceapp.data.models.SignInState
 import com.example.serviceapp.data.models.ValidationState
 import com.example.serviceapp.databinding.AccountFragmentBinding
 import com.example.serviceapp.domain.view_models.MainViewModel
@@ -32,40 +33,38 @@ class Dialog(
         with(firebaseViewModel) {
             setOnClickListeners(layoutList)
             if (validationList.all { it is ValidationState.Success }) {
-                val credential =
-                    if (dialogType == DialogType.DELETE || dialogType == DialogType.PASSWORD) {
-                        EmailAuthProvider
-                            .getCredential(
-                                binding.changeEmailView.text.toString(),
-                                layoutList[0].editText!!.text.toString()
-                            )
-                    } else {
-                        EmailAuthProvider
-                            .getCredential(
-                                binding.changeEmailView.text.toString(),
-                                layoutList[1].editText!!.text.toString()
-                            )
-                    }
-                firebaseAuth.currentUser!!.reauthenticate(credential)
-                    .addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            dialogHandler(dialog, dialogType, layoutList)
-                        } else {
-                            if (dialogType == DialogType.DELETE || dialogType == DialogType.PASSWORD) {
-                                updateInputFieldErrorState(
-                                    layoutList[0],
-                                    context.getString(R.string.incorrect_pass_message),
-                                    true
-                                )
+                when (signInState.value) {
+                    SignInState.Google -> googleCredentials.value
+                    SignInState.PhoneNumber -> phoneCredentials.value
+                    SignInState.UnsignedIn -> null
+                }?.let { it ->
+                    firebaseAuth.currentUser!!.reauthenticate(
+                        it
+                    )
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                dialogHandler(dialog, dialogType, layoutList)
                             } else {
-                                updateInputFieldErrorState(
-                                    layoutList[1],
-                                    context.getString(R.string.incorrect_email_message),
-                                    true
-                                )
+                                when (dialogType) {
+                                    DialogType.USERNAME, DialogType.EMAIL -> {
+                                        updateInputFieldErrorState(
+                                            layoutList[1],
+                                            context.getString(R.string.incorrect_pass_message),
+                                            true
+                                        )
+                                    }
+
+                                    DialogType.PASSWORD, DialogType.DELETE -> {
+                                        updateInputFieldErrorState(
+                                            layoutList[0],
+                                            context.getString(R.string.incorrect_pass_message),
+                                            true
+                                        )
+                                    }
+                                }
                             }
                         }
-                    }
+                }
             } else {
                 setErrors(context, layoutList, validationList)
             }
@@ -85,10 +84,7 @@ class Dialog(
                         userProfileChangeRequest {
                             displayName = layoutList[0].editText!!.text.toString()
                         }).addOnCompleteListener {
-                        showToast(
-                            context,
-                            context.getString(R.string.username_changed_message)
-                        )
+                        mainViewModel.popupMessage(context.getString(R.string.username_changed_message))
                         dialog.dismiss()
                     }
 
@@ -98,10 +94,7 @@ class Dialog(
                     binding.changeEmailView.text = layoutList[0].editText!!.text.toString()
                     firebaseViewModel.firebaseAuth.currentUser!!.updateEmail(layoutList[0].editText!!.text.toString())
                         .addOnCompleteListener {
-                            showToast(
-                                context,
-                                context.getString(R.string.email_changed_message)
-                            )
+                            mainViewModel.popupMessage(context.getString(R.string.email_changed_message))
                             dialog.dismiss()
                         }
                 }
@@ -109,25 +102,23 @@ class Dialog(
                 DialogType.PASSWORD -> {
                     firebaseAuth.currentUser!!.updatePassword(layoutList[1].editText!!.text.toString())
                         .addOnCompleteListener {
-                            showToast(
-                                context,
-                                context.getString(R.string.password_changed_message)
-                            )
+                            mainViewModel.popupMessage(context.getString(R.string.password_changed_message))
                             dialog.dismiss()
                         }
                 }
 
                 DialogType.DELETE -> {
+                    val uidOfDeletedUser = firebaseAuth.currentUser!!.uid
                     firebaseAuth.currentUser!!.delete()
                         .addOnCompleteListener { delete ->
                             if (delete.isSuccessful) {
                                 dialog.dismiss()
+                                firebaseViewModel.firebaseRealtimeDatabaseUserReference.child(
+                                    uidOfDeletedUser
+                                ).removeValue()
                                 firebaseAuth.signOut()
                                 mainViewModel.navigate(R.id.login_fragment)
-                                showToast(
-                                    context,
-                                    context.getString(R.string.account_deleted_message)
-                                )
+                                mainViewModel.popupMessage(context.getString(R.string.account_deleted_message))
                             }
                         }
                 }

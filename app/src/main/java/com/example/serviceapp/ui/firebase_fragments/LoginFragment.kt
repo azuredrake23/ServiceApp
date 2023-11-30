@@ -88,9 +88,6 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
                     updateSignInState(SignInState.PhoneNumber)
                     mainViewModel.navigate(R.id.phone_number_fragment)
                 }
-                registerButton.setOnClickListener {
-                    mainViewModel.navigate(R.id.register_fragment)
-                }
             }
         }
     }

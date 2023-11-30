@@ -107,11 +107,10 @@ class PhoneNumberFragment : Fragment(R.layout.phone_number_fragment) {
                             )
 //                            isUserExists(requireActivity(), fragmentPhoneNumber, false, null)
                         } else {
-                            mainViewModel.popupMessage(getString(R.string.correct_phone_number_message))
+                            editTextPhone.error = getString(R.string.correct_phone_number_message)
                         }
                     } else {
                         editTextPhone.error = getString(R.string.enter_value_message)
-                        mainViewModel.popupMessage(getString(R.string.enter_number_message))
                     }
                 }
             }

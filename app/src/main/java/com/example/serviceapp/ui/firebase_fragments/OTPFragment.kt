@@ -60,13 +60,15 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
                 onUserTryToVerify()
             }
             resendTv.setOnClickListener {
-                firebaseViewModel.verifyPhoneNumber(
-                    requireActivity(),
-                    fragmentPhoneNumber,
-                    isResend = true,
-                    fragmentResendToken!!
-                )
-                resendOTPTvVisibility()
+                    firebaseViewModel.verifyPhoneNumber(
+                        requireActivity(),
+                        fragmentPhoneNumber,
+                        isResend = true,
+                        fragmentResendToken!!
+                    )
+                if (firebaseViewModel.timerValue.value is TimerState.Stopped) {
+                    resendOTPTvVisibility()
+                }
             }
         }
     }
@@ -81,22 +83,20 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
                 viewLifecycleOwner.lifecycle,
                 Lifecycle.State.STARTED
             ).onEach {
-                findNavController().navigate(
-                    it
-                )
+                findNavController().navigate(it)
             }.launchIn(viewLifecycleOwner.lifecycleScope)
             downloadDialogState.flowWithLifecycle(
                 viewLifecycleOwner.lifecycle,
                 Lifecycle.State.STARTED
             ).onEach {
                 checkDownloadDialogState(requireActivity(), it)
-            }
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
             warningDialogMessage.flowWithLifecycle(
                 viewLifecycleOwner.lifecycle,
                 Lifecycle.State.STARTED
             ).onEach {
                 createWarningAlertDialog(requireContext(), it)
-            }
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
         }
         with(firebaseViewModel) {
             phoneNumber.observe(viewLifecycleOwner) {
@@ -106,7 +106,11 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
                 when (it) {
                     is TimerState.Processing -> {
                         if (it.leftTime != null)
-                            mainViewModel.warningDialog(getString(R.string.get_otp_later_message) + " ${it.leftTime} " + getString(R.string.seconds))
+                            mainViewModel.warningDialog(
+                                getString(R.string.get_otp_later_message) + " ${it.leftTime} " + getString(
+                                    R.string.seconds
+                                )
+                            )
                     }
 
                     is TimerState.Stopped -> {
@@ -136,13 +140,13 @@ class OTPFragment : Fragment(R.layout.otp_fragment) {
     private fun resendOTPTvVisibility() {
         with(binding) {
             setEmptyEditTexts()
-            resendTv.visibility = View.INVISIBLE
+            resendTv.visibility = View.GONE
             resendTv.isEnabled = false
 
             Handler(Looper.getMainLooper()).postDelayed({
                 resendTv.visibility = View.VISIBLE
                 resendTv.isEnabled = true
-            }, 60000)
+            }, Constants.timerValue)
         }
     }
 

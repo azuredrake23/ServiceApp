@@ -47,6 +47,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="5sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:text="@string/or"
             android:textColor="@color/black"
             android:textSize="16sp" />
@@ -61,16 +63,6 @@
             android:text="@string/with_phone_number"
             android:textColor="@color/white"
             android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/registerButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:gravity="center"
-            android:text="@string/registration_sign_up"
-            android:textColor="@color/charcoal_grey"
-            android:textSize="14sp" />
 
     </LinearLayout>
 

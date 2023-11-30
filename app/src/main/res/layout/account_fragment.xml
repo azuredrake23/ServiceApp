@@ -85,14 +85,13 @@
                 android:background="@color/grey" />
 
             <TextView
-                android:id="@+id/change_phone_number_view"
+                android:id="@+id/phone_number_view"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:gravity="center|start"
                 android:padding="10dp"
-                android:text="@string/change_phone_number"
-                android:textSize="16sp"
-                app:drawableEndCompat="@drawable/arrow_right" />
+                android:text="@string/phone_number"
+                android:textSize="16sp" />
         </LinearLayout>
 
         <LinearLayout

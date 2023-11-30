@@ -24,14 +24,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.serviceapp.R
+import com.example.serviceapp.data.common.utils.showToast
 import com.example.serviceapp.databinding.AccountFragmentBinding
 import com.example.serviceapp.domain.view_models.MainViewModel
 import com.example.serviceapp.domain.view_models.firebase_view_models.FirebaseViewModel
 import com.example.serviceapp.utils.DialogType
 import com.example.serviceapp.data.models.SignInState
 import com.example.serviceapp.data.models.SignUpState
+import com.example.serviceapp.data.models.User
 import com.example.serviceapp.domain.view_models.AccountViewModel
 import com.example.serviceapp.ui.dialogs.Dialog
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -77,9 +83,6 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
 
     private fun setListeners() {
         with(binding) {
-            changePhoneNumberView.setOnClickListener {
-                mainViewModel.navigate(R.id.phone_number_fragment)
-            }
             changeUsernameView.setOnClickListener {
                 accountViewModel.setupDialog(
                     requireContext(),
@@ -135,13 +138,26 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
             imageLiveData.observe(viewLifecycleOwner) {
                 binding.profileImage.setImageBitmap(it)
             }
+            uriLiveData.observe(viewLifecycleOwner) {
+                firebaseViewModel.firebaseRealtimeDatabaseUserReference.child(firebaseViewModel.firebaseAuth.currentUser!!.uid)
+                    .child("photo").setValue(
+                        it.toString()
+                    )
+            }
         }
         with(mainViewModel) {
-            navigateFragmentValue.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED).onEach {
+            navigateFragmentValue.flowWithLifecycle(
+                viewLifecycleOwner.lifecycle,
+                Lifecycle.State.STARTED
+            ).onEach {
                 findNavController().navigate(
                     it
                 )
             }.launchIn(viewLifecycleOwner.lifecycleScope)
+            popupValue.flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .onEach {
+                    showToast(requireContext(), it)
+                }.launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
 
@@ -150,9 +166,21 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
             accountViewModel.setupUserAvatarDir(requireContext())
             initContracts()
             with(firebaseViewModel) {
-                changeUsernameView.text = firebaseAuth.currentUser!!.displayName
-                changeEmailView.text = firebaseAuth.currentUser!!.email
-                changePhoneNumberView.text = firebaseAuth.currentUser!!.phoneNumber
+                firebaseRealtimeDatabaseUserReference.child(firebaseViewModel.firebaseAuth.currentUser!!.uid)
+                    .addListenerForSingleValueEvent(
+                        object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                snapshot.getValue<User>()?.let {
+                                    changeUsernameView.text = it.displayName
+                                    changeEmailView.text = it.email
+                                    phoneNumberView.text = it.phoneNumber
+                                }
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+
+                            }
+                        })
             }
         }
     }

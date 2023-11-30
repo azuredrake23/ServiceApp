@@ -35,6 +35,8 @@ class AccountViewModel @Inject constructor(
 
     val imageLiveData = MutableLiveData<Bitmap>()
 
+    val uriLiveData = MutableLiveData<Uri>()
+
     private lateinit var userAvatarDir: File
     lateinit var userAvatarFile: File
     lateinit var prevUserAvatarFile: File
@@ -74,6 +76,7 @@ class AccountViewModel @Inject constructor(
                     transition: Transition<in Bitmap>?
                 ) {
                     imageLiveData.value = resource
+                    uriLiveData.value = uri
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {
