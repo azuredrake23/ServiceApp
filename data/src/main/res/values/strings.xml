@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="language_header">App language</string>
+    <string name="key_language_header" translatable="false">LANGUAGE</string>
+    <string name="access_header">Access</string>
+    <string name="key_access_header" translatable="false">ACCESS</string>
+</resources>
