@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     String resources
     <string name="app_name">Service App</string>
     <string name="sign_in">Sign In</string>
@@ -55,6 +54,7 @@
     <string name="change_password">Change password</string>
     <string name="announcement">Announcements</string>
     <string name="seconds">seconds</string>
+    <string name="yes">Yes</string>
 
     Text notification
     <string name="sign_in_user_not_found_message">Account not found, try again or sign up</string>
@@ -73,12 +73,12 @@
     <string name="name_message">Enter your name</string>
     <string name="enter_email_and_pass_message">Enter email and pass</string>
     <string name="account_deleted_message">Your account successfully deleted</string>
+    <string name="account_deleted_confirmation_message">Are you sure that you want to delete your account with all data?</string>
     <string name="enter_value_message">Value required</string>
     <string name="enter_correct_data_message">Enter correct data</string>
     <string name="username_changed_message">Username successfully changed</string>
     <string name="email_changed_message">Email successfully changed</string>
-    <string name="password_changed_message">Password successfully changed</string>
-    <string name="password_mismatch_message">Password mismatch</string>
+    <string name="uri_changed_message">URI successfully changed</string>
     <string name="image_loading_error_message">Image loading error</string>
     <string name="empty_field_error_message">Empty field</string>
     <string name="database_error_message">Database request failed. Repeat later</string>
@@ -87,9 +87,7 @@
     <string name="incorrect_email_message">Enter correct email (e.g. username@gmail.com)</string>
     <string name="phone_registered_message">This phone number is already registered, please enter another one</string>
     <string name="get_otp_later_message">Impossible to get OTP. Try again in</string>
-
-    Key
-    <string name="your_web_client_id" translatable="false">607161883-tc5te2ivsfi906l4ush7t4rfhfqsj4vv.apps.googleusercontent.com</string>
+    <string name="add_phone_number">Add phone number</string>
 
     Saved values
     <string name="view_type">View type</string>
@@ -115,4 +113,7 @@
     <string name="common_preferences_title">Common settings</string>
     <string name="access_title">Access</string>
     <string name="language_title">Application language</string>
+
+    Key
+    <string name="your_web_client_id" translatable="false">607161883-tc5te2ivsfi906l4ush7t4rfhfqsj4vv.apps.googleusercontent.com</string>
 </resources>

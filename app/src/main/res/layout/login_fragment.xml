@@ -15,9 +15,9 @@
         android:background="@drawable/cloud_layout"
         android:orientation="vertical"
         android:padding="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline4">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="15dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -45,10 +45,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="5sp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:padding="5sp"
             android:text="@string/or"
             android:textColor="@color/black"
             android:textSize="16sp" />
@@ -65,19 +65,5 @@
             android:textSize="16sp" />
 
     </LinearLayout>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="113dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="244dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

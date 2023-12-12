@@ -63,23 +63,6 @@
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/password_input_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            app:boxBackgroundColor="@android:color/white"
-            app:passwordToggleEnabled="true">
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/password_enter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/normal_borders_text"
-                android:hint="@string/password"
-                android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
-
     </LinearLayout>
 
 

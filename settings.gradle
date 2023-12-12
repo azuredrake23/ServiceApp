@@ -8,3 +8,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Service App"
 include ':app'
+include ':domain'
+include ':data'

@@ -1,16 +1,10 @@
 package com.example.serviceapp.utils
 
-import android.app.Activity
 import android.app.Dialog
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.widget.PopupWindow
 import androidx.fragment.app.FragmentActivity
 import com.example.serviceapp.R
-import com.example.serviceapp.ui.main.MainActivity
-import javax.inject.Inject
-import javax.inject.Singleton
 
 object DownloadDialog {
     private var downloadDialog: Dialog? = null

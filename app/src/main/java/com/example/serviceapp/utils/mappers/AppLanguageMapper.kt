@@ -1,7 +1,7 @@
 package com.example.serviceapp.utils.mappers
 
 import androidx.core.os.LocaleListCompat
-import com.example.serviceapp.data.common.mappers.Mapper
+import com.example.serviceapp.data.mappers.Mapper
 
 object AppLanguageMapper : Mapper<String, LocaleListCompat> {
 

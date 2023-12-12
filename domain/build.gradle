@@ -1,0 +1,51 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 23
+        targetSdk 34
+        versionCode 2
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    namespace 'com.example.serviceapp.domain'
+    buildToolsVersion '33.0.0'
+}
+
+dependencies {
+
+    //Core
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0-alpha03'
+
+    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+    implementation 'com.google.dagger:hilt-android:2.48'
+
+    //Navigation
+    def nav_version = "2.7.5"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version" // Kotlin
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version" // Kotlin
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+}

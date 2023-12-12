@@ -30,7 +30,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <activity
-            android:name="com.example.serviceapp.ui.main.MainActivity"
+            android:name="com.example.serviceapp.ui.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

@@ -54,6 +54,7 @@
     <string name="change_password">Изменить пароль</string>
     <string name="announcement">Объявления</string>
     <string name="seconds">секунд</string>
+    <string name="yes">Да</string>
 
     Уведомления
     <string name="sign_in_user_not_found_message">Аккаунт не найден, повторите попытку или зарегестрируйтесь</string>
@@ -72,12 +73,12 @@
     <string name="name_message">Введите ваше имя</string>
     <string name="enter_email_and_pass_message">Введите email и пароль</string>
     <string name="account_deleted_message">Ваш аккаунт успешно удалён</string>
+    <string name="account_deleted_confirmation_message">Вы уверены, что хотите удалить ваш аккаунт со всеми данными?</string>
     <string name="enter_value_message">Введите значение</string>
     <string name="enter_correct_data_message">Введите правильные данные</string>
     <string name="username_changed_message">Имя пользователя успешно изменено</string>
     <string name="email_changed_message">Email успешно изменён</string>
-    <string name="password_changed_message">Пароль успешно изменён</string>
-    <string name="password_mismatch_message">Пароли не совпадают</string>
+    <string name="uri_changed_message">URI успешно изменён</string>
     <string name="image_loading_error_message">Ошибка загрузки изображения</string>
     <string name="empty_field_error_message">Пустое поле</string>
     <string name="database_error_message">Запрос к базе данных не выполнен. Повторите позже</string>
@@ -87,6 +88,7 @@
 <!--    <string name="incorrect_email_message">Введите корректный email (прим. username@gmail.com)</string>-->
     <string name="phone_registered_message">Этот номер телефона уже зарегистрирован, введите другой</string>
     <string name="get_otp_later_message">Невозможно получить OTP. Попробуйте ещё раз через</string>
+    <string name="add_phone_number">Добавить номер телефона</string>
 
     <string name="view_type">Тип видимости</string>
     <string name="russian">Русский</string>
